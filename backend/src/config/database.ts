@@ -1,11 +1,13 @@
-import mysql from "mysql2/promise"
+import mysql from "mysql2/promise";
+import { env } from "./env.js";
 
-export const db = mysql.createPool({
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
+export const database = mysql.createPool({
+  host: env.database.host,
+  port: env.database.port,
+  user: env.database.user,
+  password: env.database.password,
+  database: env.database.name,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
