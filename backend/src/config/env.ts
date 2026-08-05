@@ -33,6 +33,7 @@ export const env = {
 
   auth: {
     tenantAccessSecret: required("JWT_TENANT_ACCESS_SECRET"),
+    platformAccessSecret: required("JWT_PLATFORM_ACCESS_SECRET"),
 
     accessTokenSeconds: positiveInteger(
       "JWT_ACCESS_TOKEN_SECONDS",

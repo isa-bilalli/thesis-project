@@ -404,6 +404,7 @@ await connection.execute(
       first_name = ?,
       last_name = ?,
       password_hash = ?,
+      auth_version = auth_version + 1,
       role = 'SYSTEM_ADMIN',
       status = 'ACTIVE',
       deleted_at = NULL
@@ -437,6 +438,7 @@ await connection.execute(
       first_name = ?,
       last_name = ?,
       password_hash = ?,
+      auth_version = auth_version + 1,
       status = 'ACTIVE',
       deleted_at = NULL
   `,
