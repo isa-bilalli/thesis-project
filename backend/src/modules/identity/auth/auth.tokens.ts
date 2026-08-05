@@ -3,7 +3,7 @@ import {
   randomBytes,
 } from "node:crypto";
 import { sign } from "jsonwebtoken";
-import { env } from "../../config/env.js";
+import { env } from "../../../config/env";
 
 interface Authorization {
   roles: string[];

@@ -1,5 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import { database } from "../../config/database.js";
+import { database } from "../../../config/database";
 
 interface TenantUserRow extends RowDataPacket {
   id: number;

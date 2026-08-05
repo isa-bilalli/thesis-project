@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
-import { authRouter } from "./modules/identity/auth.routes";
 import { errorHandler } from "./shared/middleware/error-handler";
 import { database } from "./config/database";
 import cookieParser from "cookie-parser";
+import { identityRouter } from "./modules/identity/identity.routes";
 
 const app = express();
 
@@ -33,7 +33,7 @@ app.get("/api/health", async (req, res) =>{
     }
 })
 
-app.use("/api/auth", authRouter);
+app.use("/api", identityRouter);
 app.use(errorHandler);
 
 export default app;

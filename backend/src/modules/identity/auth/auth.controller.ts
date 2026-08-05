@@ -3,7 +3,7 @@ import type {
   Request,
   Response,
 } from "express";
-import { AppError } from "../../shared/errors/app-error";
+import { AppError } from "../../../shared/errors/app-error.js";
 import { loginTenantUser, getCurrentTenantUser, refreshTenantSession, logoutTenantSession } from "./auth.service.js";
 import {
   getRefreshTokenClearOptions,

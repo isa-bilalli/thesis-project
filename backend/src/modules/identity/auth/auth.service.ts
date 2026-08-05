@@ -1,7 +1,7 @@
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
-import { env } from "../../config/env.js";
-import { AppError } from "../../shared/errors/app-error";
+import { env } from "../../../config/env.js";
+import { AppError } from "../../../shared/errors/app-error.js";
 import {
   findTenantUserForLogin,
   findUserAuthorization,
