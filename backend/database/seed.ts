@@ -1,10 +1,6 @@
 import type { RowDataPacket } from "mysql2";
 import { database } from "../src/config/database";
 import { hash } from "bcryptjs";
-import {
-  passwordPolicyDescription,
-  satisfiesPasswordPolicy,
-} from "../src/shared/auth/password-policy";
 
 interface IdRow extends RowDataPacket {
   id: number;
@@ -23,16 +19,6 @@ function requiredSeedEnvironment(name: string): string {
   }
 
   return value;
-}
-
-function requiredSeedPassword(name: string): string {
-  const password = requiredSeedEnvironment(name);
-
-  if (!satisfiesPasswordPolicy(password)) {
-    throw new Error(`${name} ${passwordPolicyDescription}`);
-  }
-
-  return password;
 }
 
 const permissionSeeds = [
@@ -121,7 +107,7 @@ async function runSeed(): Promise<void> {
         "SEED_SYSTEM_ADMIN_EMAIL",
     ).toLowerCase();
 
-    const systemAdminPassword = requiredSeedPassword(
+    const systemAdminPassword = requiredSeedEnvironment(
         "SEED_SYSTEM_ADMIN_PASSWORD",
     );
 
@@ -129,7 +115,7 @@ async function runSeed(): Promise<void> {
         "SEED_TENANT_ADMIN_EMAIL",
     ).toLowerCase();
 
-    const tenantAdminPassword = requiredSeedPassword(
+    const tenantAdminPassword = requiredSeedEnvironment(
         "SEED_TENANT_ADMIN_PASSWORD",
     );
 

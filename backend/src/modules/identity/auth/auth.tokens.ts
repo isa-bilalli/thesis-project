@@ -13,14 +13,12 @@ interface Authorization {
 export function createTenantAccessToken(
   userId: number,
   tenantId: number,
-  authVersion: number,
   authorization: Authorization,
 ): string {
   return sign(
     {
       actorType: "TENANT",
       tenantId,
-      authVersion,
       roles: authorization.roles,
       permissions: authorization.permissions,
     },
