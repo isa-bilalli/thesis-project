@@ -9,6 +9,7 @@ interface TenantUserRow extends RowDataPacket {
   lastName: string;
   email: string;
   passwordHash: string;
+  authVersion: number;
 }
 
 interface AuthorizationRow extends RowDataPacket {
@@ -24,6 +25,7 @@ export interface TenantAuthUser {
   lastName: string;
   email: string;
   passwordHash: string;
+  authVersion: number;
 }
 
 export interface UserAuthorization {
@@ -40,6 +42,10 @@ interface CurrentTenantUserRow extends RowDataPacket {
     email: string;
 }
 
+interface UserPasswordHashRow extends RowDataPacket {
+  passwordHash: string;
+}
+
 interface StoreRefreshTokenInput {
   tenantId: number;
   userId: number;
@@ -51,6 +57,7 @@ interface RefreshSessionRow extends RowDataPacket {
   id: number;
   tenantId: number;
   userId: number;
+  authVersion: number;
 }
 
 interface NewRefreshToken {
@@ -61,6 +68,7 @@ interface NewRefreshToken {
 export interface RotatedRefreshSession {
   tenantId: number;
   userId: number;
+  authVersion: number;
 }
 
 export async function revokeStoredRefreshToken(
@@ -92,7 +100,8 @@ export async function rotateStoredRefreshToken(
         SELECT
           rt.id,
           rt.tenant_id AS tenantId,
-          rt.user_id AS userId
+          rt.user_id AS userId,
+          u.auth_version AS authVersion
         FROM refresh_tokens rt
         INNER JOIN users u
           ON u.id = rt.user_id
@@ -158,6 +167,7 @@ export async function rotateStoredRefreshToken(
     return {
       tenantId: currentToken.tenantId,
       userId: currentToken.userId,
+      authVersion: currentToken.authVersion,
     };
   } catch (error) {
     await connection.rollback();
@@ -226,7 +236,8 @@ export async function findTenantUserForLogin(
         u.first_name AS firstName,
         u.last_name AS lastName,
         u.email,
-        u.password_hash AS passwordHash
+        u.password_hash AS passwordHash,
+        u.auth_version AS authVersion
       FROM users u
       INNER JOIN tenants t
         ON t.id = u.tenant_id
@@ -289,4 +300,91 @@ export async function updateLastLogin(userId: number): Promise<void> {
     `,
     [userId],
   );
+}
+
+export async function findUserPasswordHash(
+  tenantId: number,
+  userId: number,
+): Promise<string | null> {
+  const [rows] = await database.execute<UserPasswordHashRow[]>(
+    `
+      SELECT u.password_hash AS passwordHash
+      FROM users u
+      INNER JOIN tenants t
+        ON t.id = u.tenant_id
+      WHERE u.tenant_id = ?
+        AND u.id = ?
+        AND u.status = 'ACTIVE'
+        AND u.deleted_at IS NULL
+        AND t.status = 'ACTIVE'
+        AND t.deleted_at IS NULL
+      LIMIT 1
+    `,
+    [tenantId, userId],
+  );
+  return rows[0]?.passwordHash ?? null;
+}
+
+export async function updatePassword(
+  tenantId: number,
+  userId: number,
+  currentPasswordHash: string,
+  newPasswordHash: string,
+): Promise<boolean> {
+  const connection = await database.getConnection();
+
+  try {
+    await connection.beginTransaction();
+
+    const [updateResult] =
+      await connection.execute<ResultSetHeader>(
+        `
+          UPDATE users u
+          INNER JOIN tenants t
+            ON t.id = u.tenant_id
+          SET
+            u.password_hash = ?,
+            u.auth_version = u.auth_version + 1
+          WHERE u.tenant_id = ?
+            AND u.id = ?
+            AND u.password_hash = ?
+            AND u.status = 'ACTIVE'
+            AND u.deleted_at IS NULL
+            AND t.status = 'ACTIVE'
+            AND t.deleted_at IS NULL
+        `,
+        [
+          newPasswordHash,
+          tenantId,
+          userId,
+          currentPasswordHash,
+        ],
+      );
+
+    if (updateResult.affectedRows !== 1) {
+      await connection.rollback();
+      return false;
+    }
+
+    await connection.execute(
+      `
+        UPDATE refresh_tokens
+        SET
+          revoked_at = UTC_TIMESTAMP(3),
+          revocation_reason = 'PASSWORD_CHANGED'
+        WHERE tenant_id = ?
+          AND user_id = ?
+          AND revoked_at IS NULL
+      `,
+      [tenantId, userId],
+    );
+
+    await connection.commit();
+    return true;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 }

@@ -12,6 +12,10 @@ import {
 } from './user.repository'
 import { hash } from 'bcryptjs';
 import { AppError } from '../../../shared/errors/app-error';
+import {
+  passwordPolicyDescription,
+  satisfiesPasswordPolicy,
+} from '../../../shared/auth/password-policy';
 
 export interface UpdateUserStatusInput {
   tenantId: number;
@@ -192,14 +196,10 @@ export async function createTenantUser(input: CreateUserInput): Promise<CreatedU
     );
   }
 
-  if (
-    typeof input.password !== "string" ||
-    input.password.length < 12 ||
-    input.password.length > 128
-  ) {
+  if (!satisfiesPasswordPolicy(input.password)) {
     throw new AppError(
       400,
-      "Password must contain between 12 and 128 characters",
+      `Password ${passwordPolicyDescription}`,
     );
   }
 

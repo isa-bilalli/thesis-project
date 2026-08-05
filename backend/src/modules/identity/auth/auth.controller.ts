@@ -4,7 +4,13 @@ import type {
   Response,
 } from "express";
 import { AppError } from "../../../shared/errors/app-error.js";
-import { loginTenantUser, getCurrentTenantUser, refreshTenantSession, logoutTenantSession } from "./auth.service.js";
+import {
+  getCurrentTenantUser,
+  loginTenantUser,
+  logoutTenantSession,
+  refreshTenantSession,
+  updatePassword,
+} from "./auth.service.js";
 import {
   getRefreshTokenClearOptions,
   getRefreshTokenCookieOptions,
@@ -99,4 +105,45 @@ export async function logoutController(request: Request, response: Response, nex
     }catch(err){
         next(err);
     } 
+}
+
+export async function changePasswordController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!request.auth) {
+      throw new AppError(401, "Authentication Required");
+    }
+
+    const currentPassword = request.body?.currentPassword;
+    const newPassword = request.body?.newPassword;
+
+    if (
+      typeof currentPassword !== "string" ||
+      typeof newPassword !== "string"
+    ) {
+      throw new AppError(
+        400,
+        "Current password and new password are required.",
+      );
+    }
+
+    await updatePassword({
+      tenantId: request.auth.tenantId,
+      userId: request.auth.userId,
+      currentPassword,
+      newPassword,
+    });
+
+    response.clearCookie(
+      refreshTokenCookieName,
+      getRefreshTokenClearOptions(),
+    );
+
+    response.status(204).send();
+  } catch (error) {
+    next(error);
+  }
 }
