@@ -4,6 +4,7 @@ import {
   createTenantController,
   getTenantByIdController,
   listTenantsController,
+  updateTenantController,
   updateTenantStatusController,
 } from "./tenant.controller.js";
 
@@ -13,4 +14,5 @@ tenantRouter.use(requirePlatformAuth);
 tenantRouter.post("/", createTenantController);
 tenantRouter.get("/", listTenantsController);
 tenantRouter.patch("/:tenantId/status", updateTenantStatusController);
+tenantRouter.patch("/:tenantId", updateTenantController);
 tenantRouter.get("/:tenantId", getTenantByIdController);

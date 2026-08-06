@@ -41,6 +41,10 @@ const permissionSeeds = [
     description: "Create, update and disable dealership users",
   },
   {
+    code: "locations.manage",
+    description: "Create and manage dealership locations",
+  },
+  {
     code: "inventory.read",
     description: "View vehicle inventory",
   },

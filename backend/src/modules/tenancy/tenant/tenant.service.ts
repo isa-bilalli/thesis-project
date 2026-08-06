@@ -3,15 +3,22 @@ import {
   createTenantWithPrimaryLocation,
   findTenantById,
   getAllTenants,
+  updateTenant as updateTenantRepository,
   updateTenantStatus as updateTenantStatusRepository,
   type TenantStatus,
   type CreatedTenant,
   type TenantListItem,
+  type UpdateTenantChanges,
 } from "./tenant.repository.js";
 
 export interface ChangeTenantStatusInput {
   tenantId: number;
   status: string;
+}
+
+export interface UpdateTenantInput {
+  tenantId: number;
+  changes: UpdateTenantChanges;
 }
 
 export interface CreateTenantInput {
@@ -84,6 +91,91 @@ export async function updateTenantStatus(
   const result = await updateTenantStatusRepository({
     tenantId: input.tenantId,
     status,
+  });
+
+  if (result.outcome === "NOT_FOUND") {
+    throw new AppError(404, "Tenant not found");
+  }
+
+  return result.tenant;
+}
+
+export async function updateTenant(
+  input: UpdateTenantInput,
+): Promise<TenantListItem> {
+  if (!Number.isInteger(input.tenantId) || input.tenantId <= 0) {
+    throw new AppError(400, "A valid tenant ID is required");
+  }
+
+  const changes: UpdateTenantChanges = {};
+
+  if (input.changes.name !== undefined) {
+    const name = input.changes.name.trim();
+
+    if (!name || name.length > 150) {
+      throw new AppError(
+        400,
+        "Tenant name is required and cannot exceed 150 characters",
+      );
+    }
+
+    changes.name = name;
+  }
+
+  if (input.changes.contactEmail !== undefined) {
+    const contactEmail =
+      optionalTrimmed(input.changes.contactEmail)?.toLowerCase() ?? null;
+
+    if (
+      contactEmail &&
+      (!isValidEmail(contactEmail) || contactEmail.length > 255)
+    ) {
+      throw new AppError(400, "A valid contact email is required");
+    }
+
+    changes.contactEmail = contactEmail;
+  }
+
+  if (input.changes.contactPhone !== undefined) {
+    const contactPhone = optionalTrimmed(input.changes.contactPhone);
+
+    if (contactPhone && contactPhone.length > 30) {
+      throw new AppError(400, "Contact phone cannot exceed 30 characters");
+    }
+
+    changes.contactPhone = contactPhone;
+  }
+
+  if (input.changes.currencyCode !== undefined) {
+    const currencyCode = input.changes.currencyCode.trim().toUpperCase();
+
+    if (!/^[A-Z]{3}$/.test(currencyCode)) {
+      throw new AppError(
+        400,
+        "Currency code must contain exactly three letters",
+      );
+    }
+
+    changes.currencyCode = currencyCode;
+  }
+
+  if (input.changes.timezone !== undefined) {
+    const timezone = input.changes.timezone.trim();
+
+    if (timezone.length > 64 || !isValidTimezone(timezone)) {
+      throw new AppError(400, "A valid IANA timezone is required");
+    }
+
+    changes.timezone = timezone;
+  }
+
+  if (Object.keys(changes).length === 0) {
+    throw new AppError(400, "At least one tenant field must be provided");
+  }
+
+  const result = await updateTenantRepository({
+    tenantId: input.tenantId,
+    changes,
   });
 
   if (result.outcome === "NOT_FOUND") {

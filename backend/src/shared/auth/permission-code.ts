@@ -1,11 +1,12 @@
-export type PermissionCode = 
-| "users.manage"
-| "inventory.read"
-| "inventory.write"
-| "inventory.reserve"
-| "crm.read"
-| "crm.write"
-| "sales.read"
-| "sales.create_offer"
-| "sales.complete"
-| "reports.read"
+export type PermissionCode =
+  | "users.manage"
+  | "locations.manage"
+  | "inventory.read"
+  | "inventory.write"
+  | "inventory.reserve"
+  | "crm.read"
+  | "crm.write"
+  | "sales.read"
+  | "sales.create_offer"
+  | "sales.complete"
+  | "reports.read";

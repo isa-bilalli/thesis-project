@@ -34,6 +34,29 @@ export type UpdateTenantStatusRepositoryResult =
   | {
       outcome: "NOT_FOUND";
     };
+
+export interface UpdateTenantChanges {
+  name?: string;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  currencyCode?: string;
+  timezone?: string;
+}
+
+export interface UpdateTenantRepositoryInput {
+  tenantId: number;
+  changes: UpdateTenantChanges;
+}
+
+export type UpdateTenantRepositoryResult =
+  | {
+      outcome: "UPDATED";
+      tenant: TenantListItem;
+    }
+  | {
+      outcome: "NOT_FOUND";
+    };
+
 export interface CreateTenantRepositoryInput {
   name: string;
   slug: string;
@@ -315,4 +338,86 @@ export async function updateTenantStatus(
     outcome: "UPDATED",
     tenant,
   };
+}
+
+export async function updateTenant(
+  input: UpdateTenantRepositoryInput,
+): Promise<UpdateTenantRepositoryResult> {
+  const setClauses: string[] = [];
+  const values: Array<string | number | null> = [];
+
+  function addChange(
+    column: string,
+    value: string | null | undefined,
+  ): void {
+    if (value !== undefined) {
+      setClauses.push(`${column} = ?`);
+      values.push(value);
+    }
+  }
+
+  addChange("name", input.changes.name);
+  addChange("contact_email", input.changes.contactEmail);
+  addChange("contact_phone", input.changes.contactPhone);
+  addChange("currency_code", input.changes.currencyCode);
+  addChange("timezone", input.changes.timezone);
+
+  if (setClauses.length === 0) {
+    throw new Error("At least one tenant change is required");
+  }
+
+  const connection = await database.getConnection();
+
+  try {
+    await connection.beginTransaction();
+    await connection.execute<ResultSetHeader>(
+      `
+        UPDATE tenants
+        SET ${setClauses.join(", ")}
+        WHERE id = ?
+          AND deleted_at IS NULL
+      `,
+      [...values, input.tenantId],
+    );
+
+    const [rows] = await connection.execute<TenantListRow[]>(
+      `
+        SELECT
+          t.id,
+          t.name,
+          t.slug,
+          t.contact_email AS contactEmail,
+          t.contact_phone AS contactPhone,
+          t.currency_code AS currencyCode,
+          t.timezone,
+          t.status,
+          t.created_at AS createdAt,
+          t.updated_at AS updatedAt
+        FROM tenants t
+        WHERE t.id = ?
+          AND t.deleted_at IS NULL
+        LIMIT 1
+      `,
+      [input.tenantId],
+    );
+
+    const tenant = rows[0];
+
+    if (!tenant) {
+      await connection.rollback();
+      return { outcome: "NOT_FOUND" };
+    }
+
+    await connection.commit();
+
+    return {
+      outcome: "UPDATED",
+      tenant,
+    };
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 }

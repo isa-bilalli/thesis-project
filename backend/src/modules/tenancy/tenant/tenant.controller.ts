@@ -4,12 +4,21 @@ import {
   createTenant,
   getTenantById,
   listTenants,
+  updateTenant,
   updateTenantStatus,
 } from "./tenant.service.js";
 
 function isOptionalString(value: unknown): value is string | null | undefined {
   return value === undefined || value === null || typeof value === "string";
 }
+
+const UPDATABLE_TENANT_FIELDS = new Set([
+  "name",
+  "contactEmail",
+  "contactPhone",
+  "currencyCode",
+  "timezone",
+]);
 
 export async function createTenantController(
   request: Request,
@@ -128,6 +137,82 @@ export async function updateTenantStatusController(
     const tenant = await updateTenantStatus({
       tenantId: Number(request.params.tenantId),
       status,
+    });
+
+    response.status(200).json({ tenant });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateTenantController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!request.platformAuth) {
+      throw new AppError(401, "Platform authentication required");
+    }
+
+    const body: unknown = request.body;
+
+    if (typeof body !== "object" || body === null || Array.isArray(body)) {
+      throw new AppError(400, "Invalid tenant update request");
+    }
+
+    const tenantBody = body as Record<string, unknown>;
+
+    if (
+      "tenantId" in tenantBody ||
+      "slug" in tenantBody ||
+      "status" in tenantBody ||
+      "primaryLocation" in tenantBody
+    ) {
+      throw new AppError(
+        400,
+        "tenantId, slug, status, and primaryLocation cannot be changed with this endpoint",
+      );
+    }
+
+    const unsupportedFields = Object.keys(tenantBody).filter(
+      (field) => !UPDATABLE_TENANT_FIELDS.has(field),
+    );
+
+    if (unsupportedFields.length > 0) {
+      throw new AppError(
+        400,
+        `Unsupported tenant fields: ${unsupportedFields.join(", ")}`,
+      );
+    }
+
+    const {
+      name,
+      contactEmail,
+      contactPhone,
+      currencyCode,
+      timezone,
+    } = tenantBody;
+
+    if (
+      (name !== undefined && typeof name !== "string") ||
+      !isOptionalString(contactEmail) ||
+      !isOptionalString(contactPhone) ||
+      (currencyCode !== undefined && typeof currencyCode !== "string") ||
+      (timezone !== undefined && typeof timezone !== "string")
+    ) {
+      throw new AppError(400, "Invalid tenant update request");
+    }
+
+    const tenant = await updateTenant({
+      tenantId: Number(request.params.tenantId),
+      changes: {
+        name,
+        contactEmail,
+        contactPhone,
+        currencyCode,
+        timezone,
+      },
     });
 
     response.status(200).json({ tenant });
