@@ -2,6 +2,7 @@ export type PermissionCode =
   | "users.manage"
   | "locations.manage"
   | "inventory.read"
+  | "inventory.financials.read"
   | "inventory.write"
   | "inventory.reserve"
   | "crm.read"

@@ -49,6 +49,10 @@ const permissionSeeds = [
     description: "View vehicle inventory",
   },
   {
+    code: "inventory.financials.read",
+    description: "View vehicle purchase and minimum prices",
+  },
+  {
     code: "inventory.write",
     description: "Create and update vehicles",
   },
@@ -95,6 +99,7 @@ const roleSeeds = [
     description: "Manages inventory, CRM and sales operations",
     permissionCodes: [
       "inventory.read",
+      "inventory.financials.read",
       "inventory.write",
       "inventory.reserve",
       "crm.read",

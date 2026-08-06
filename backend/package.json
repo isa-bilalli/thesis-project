@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "tsx --test tests/inventory/vehicle-detail.integration.test.ts tests/inventory/vehicle-create.integration.test.ts",
     "dev": "tsx watch src/server.ts",
     "migrate": "tsx database/migrate.ts",
     "seed": "tsx database/seed.ts",

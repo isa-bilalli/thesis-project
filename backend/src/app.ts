@@ -5,6 +5,7 @@ import { database } from "./config/database";
 import cookieParser from "cookie-parser";
 import { identityRouter } from "./modules/identity/identity.routes";
 import { tenancyRouter } from "./modules/tenancy/tenancy.routes";
+import { inventoryRouter } from "./modules/inventory/inventory.routes";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.get("/api/health", async (req, res) =>{
 
 app.use("/api", identityRouter);
 app.use("/api", tenancyRouter);
+app.use("/api", inventoryRouter);
 app.use(errorHandler);
 
 export default app;
