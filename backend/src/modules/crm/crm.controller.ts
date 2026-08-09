@@ -403,6 +403,7 @@ export async function updateLeadStatusController(
     const lead = await updateLeadStatus({
       tenantId: request.auth.tenantId,
       leadId: request.params.leadId,
+      actorUserId: request.auth.userId,
       status: leadBody.status,
       lostReason: leadBody.lostReason,
     });

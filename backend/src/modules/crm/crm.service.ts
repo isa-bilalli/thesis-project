@@ -155,6 +155,7 @@ export interface UpdateLeadInput {
 export interface UpdateLeadStatusInput {
   tenantId: number;
   leadId: unknown;
+  actorUserId: number;
   status: unknown;
   lostReason: unknown;
 }
@@ -1083,6 +1084,11 @@ export async function updateLeadStatus(
   input: UpdateLeadStatusInput,
 ): Promise<LeadDetails> {
   validateTenantId(input.tenantId);
+
+  if (!Number.isSafeInteger(input.actorUserId) || input.actorUserId <= 0) {
+    throw new AppError(400, "A valid actor user ID is required");
+  }
+
   const leadId = parseLeadId(input.leadId);
   const status = parseEnum(input.status, "status", LEAD_STATUSES);
 
@@ -1105,6 +1111,7 @@ export async function updateLeadStatus(
   const result = await updateLeadStatusRepository({
     tenantId: input.tenantId,
     leadId,
+    actorUserId: input.actorUserId,
     status,
     lostReason,
   });

@@ -265,6 +265,7 @@ export type UpdateLeadRepositoryResult =
 export interface UpdateLeadStatusRepositoryInput {
   tenantId: number;
   leadId: number;
+  actorUserId: number;
   status: LeadStatus;
   lostReason: string | null;
 }
@@ -1574,6 +1575,31 @@ export async function updateLeadStatus(
     if (updateResult.affectedRows !== 1) {
       throw new Error("Lead status could not be updated");
     }
+
+    await connection.execute<ResultSetHeader>(
+      `
+        INSERT INTO lead_activities (
+          tenant_id,
+          lead_id,
+          user_id,
+          activity_type,
+          status,
+          subject,
+          details,
+          outcome,
+          completed_at
+        )
+        VALUES (?, ?, ?, 'STATUS_CHANGE', 'COMPLETED', ?, ?, ?, CURRENT_TIMESTAMP(3))
+      `,
+      [
+        input.tenantId,
+        input.leadId,
+        input.actorUserId,
+        `Lead status changed to ${input.status}`,
+        `${currentStatus} -> ${input.status}`,
+        input.status === "LOST" ? input.lostReason : null,
+      ],
+    );
 
     const [updatedRows] = await connection.execute<LeadDetailsRow[]>(
       LEAD_DETAILS_QUERY,
