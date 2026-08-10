@@ -1,4 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
+import type { PoolConnection } from "mysql2/promise";
 import { database } from "../../config/database.js";
 
 export type VehicleCondition = "NEW" | "USED";
@@ -509,6 +510,50 @@ function mapVehicleReservationRow(
   };
 }
 
+async function expireReservationForVehicle(
+  connection: PoolConnection,
+  tenantId: number,
+  vehicleId: number,
+): Promise<void> {
+  const [reservationResult] = await connection.execute<ResultSetHeader>(
+    `
+      UPDATE vehicle_reservations
+      SET status = 'EXPIRED',
+          updated_at = CURRENT_TIMESTAMP(3)
+      WHERE tenant_id = ?
+        AND vehicle_id = ?
+        AND status = 'ACTIVE'
+        AND expires_at <= CURRENT_TIMESTAMP(3)
+    `,
+    [tenantId, vehicleId],
+  );
+
+  if (reservationResult.affectedRows === 0) {
+    return;
+  }
+
+  await connection.execute<ResultSetHeader>(
+    `
+      UPDATE vehicles vehicle
+      SET vehicle.status = 'AVAILABLE',
+          vehicle.updated_at = CURRENT_TIMESTAMP(3)
+      WHERE vehicle.id = ?
+        AND vehicle.tenant_id = ?
+        AND vehicle.status = 'RESERVED'
+        AND vehicle.deleted_at IS NULL
+        AND NOT EXISTS (
+          SELECT 1
+          FROM vehicle_reservations active_reservation
+          WHERE active_reservation.tenant_id = vehicle.tenant_id
+            AND active_reservation.vehicle_id = vehicle.id
+            AND active_reservation.status = 'ACTIVE'
+            AND active_reservation.expires_at > CURRENT_TIMESTAMP(3)
+        )
+    `,
+    [vehicleId, tenantId],
+  );
+}
+
 function getVehicleConflict(
   error: unknown,
 ): "STOCK_NUMBER_CONFLICT" | "VIN_CONFLICT" | null {
@@ -971,6 +1016,11 @@ export async function updateVehicleStatusRepository(
 
   try {
     await connection.beginTransaction();
+    await expireReservationForVehicle(
+      connection,
+      input.tenantId,
+      input.vehicleId,
+    );
 
     const [statusRows] = await connection.execute<VehicleStatusRow[]>(
       `
@@ -1058,6 +1108,11 @@ export async function reserveVehicle(
 
   try {
     await connection.beginTransaction();
+    await expireReservationForVehicle(
+      connection,
+      input.tenantId,
+      input.vehicleId,
+    );
 
     const [statusRows] = await connection.execute<VehicleStatusRow[]>(
       `
@@ -1260,6 +1315,11 @@ export async function cancelVehicleReservation(
 
   try {
     await connection.beginTransaction();
+    await expireReservationForVehicle(
+      connection,
+      input.tenantId,
+      input.vehicleId,
+    );
 
     const [statusRows] = await connection.execute<VehicleStatusRow[]>(
       `

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "tsx --test tests/inventory/vehicle-detail.integration.test.ts tests/inventory/vehicle-create.integration.test.ts tests/crm/crm-remaining.integration.test.ts",
+    "test": "tsx --test tests/inventory/vehicle-detail.integration.test.ts tests/inventory/vehicle-create.integration.test.ts tests/crm/crm-remaining.integration.test.ts tests/sales/sales.integration.test.ts",
     "dev": "tsx watch src/server.ts",
     "migrate": "tsx database/migrate.ts",
     "seed": "tsx database/seed.ts",
