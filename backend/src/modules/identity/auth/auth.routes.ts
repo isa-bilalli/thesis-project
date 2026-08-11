@@ -11,8 +11,8 @@ import { requireTenantAuth } from "../../../shared/middleware/require-tenant-aut
 export const authRouter = Router();
 
 authRouter.post("/login", loginController);
-authRouter.post("/refresh", requireTenantAuth, refreshController);
-authRouter.post("/logout", requireTenantAuth, logoutController);
+authRouter.post("/refresh", refreshController);
+authRouter.post("/logout", logoutController);
 
 authRouter.get("/me", requireTenantAuth, getMeController);
 
