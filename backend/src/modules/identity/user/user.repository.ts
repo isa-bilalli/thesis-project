@@ -49,7 +49,7 @@ export type TenantRoleCode =
 
 export interface CreateUserRepositoryInput {
   tenantId: number;
-  assignedByUserId: number;
+  assignedByUserId: number | null;
   defaultLocationId: number;
   firstName: string;
   lastName: string;
@@ -190,7 +190,7 @@ function isDuplicateEntry(error: unknown): boolean {
 export async function createUser(input: CreateUserRepositoryInput): Promise<CreateUserRepositoryResult> {
   const connection = await database.getConnection();
   try{
-    connection.beginTransaction()
+    await connection.beginTransaction()
 
     const [locationRows] = await connection.execute<IdRow[]>(
       `

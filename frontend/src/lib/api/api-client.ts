@@ -23,6 +23,7 @@ export class ApiError extends Error {
 
 export interface ApiRequestOptions extends RequestInit {
   authenticated?: boolean
+  authorizationToken?: string | null
 }
 
 function getRequestUrl(path: string): string {
@@ -49,11 +50,19 @@ export async function apiRequest<T>(
   path: string,
   options: ApiRequestOptions = {},
 ): Promise<T> {
-  const { authenticated = false, headers, ...requestOptions } = options
+  const {
+    authenticated = false,
+    authorizationToken,
+    headers,
+    ...requestOptions
+  } = options
   const requestHeaders = new Headers(headers)
 
-  if (authenticated) {
-    const accessToken = authTokenStore.get()
+  if (authenticated || authorizationToken !== undefined) {
+    const accessToken =
+      authorizationToken !== undefined
+        ? authorizationToken
+        : authTokenStore.get()
 
     if (!accessToken) {
       throw new ApiError('Authentication required', 401)

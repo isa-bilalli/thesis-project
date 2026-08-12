@@ -3,16 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import loginButtonIcon from '@/assets/icons8-login-button-100.png'
 import loginBackground from '@/assets/loginBackground.png'
 import { ApiError } from '@/lib/api/api-client'
-import { useAuth } from '../hooks/useAuth'
+import { usePlatformAuth } from '../hooks/usePlatformAuth'
 
-export function LoginPage() {
+export function PlatformLoginPage() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login } = usePlatformAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -21,7 +21,7 @@ export function LoginPage() {
 
     try {
       await login({ email, password })
-      navigate('/dashboard', { replace: true })
+      navigate('/platform/dashboard', { replace: true })
     } catch (submitError) {
       setError(
         submitError instanceof ApiError
@@ -55,6 +55,7 @@ export function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              required
             />
             <div className="relative w-[60%] self-center">
               <input
@@ -64,6 +65,7 @@ export function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                required
               />
               <button
                 type="button"

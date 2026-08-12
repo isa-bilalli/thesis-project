@@ -11,6 +11,7 @@ import { PublicOnlyRoute } from '@/features/auth/components/PublicOnlyRoute'
 import { LoginPage } from '@/features/auth/pages/LoginPage'
 import type { PermissionCode } from '@/features/auth/types/auth'
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage'
+import { platformRoutes } from '@/features/platform/routes/platform-routes'
 
 interface ProtectedRouteDefinition {
   path: string
@@ -29,6 +30,7 @@ const protectedRoutes: ProtectedRouteDefinition[] = [
 ]
 
 export const router = createBrowserRouter([
+  platformRoutes,
   {
     element: <PublicOnlyRoute />,
     children: [

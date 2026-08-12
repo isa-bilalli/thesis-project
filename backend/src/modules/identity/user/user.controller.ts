@@ -125,7 +125,11 @@ export async function updateTenantUserStatusController(request: Request, respons
       authenticatedUserId:request.auth.userId,
       targetUserId: targetUserId,
       status: status,
-    }) 
+    })
+
+    response.status(200).json({
+      user: updatedStatusResult,
+    });
   }catch(err){
     next(err);
   }

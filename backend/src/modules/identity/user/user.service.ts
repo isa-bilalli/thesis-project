@@ -29,6 +29,12 @@ export interface UpdatedUserStatus {
   status: UserAccountStatus;
 }
 
+export interface PlatformUpdateUserStatusInput {
+  tenantId: number;
+  targetUserId: number;
+  status: string;
+}
+
 export interface ReplaceTenantUserRolesInput {
   tenantId: number;
   authenticatedUserId: number;
@@ -62,7 +68,7 @@ function isUserAccountStatus(
 
 export interface CreateUserInput {
   tenantId: number;
-  assignedByUserId: number;
+  assignedByUserId: number | null;
   defaultLocationId: number;
   firstName: string;
   lastName: string;
@@ -264,7 +270,9 @@ export async function listUsers(tenantId: number): Promise<UserListItem[]> {
   return getAllUsers(tenantId);
 }
 
-export async function updateTenantUserStatus(input: UpdateUserStatusInput): Promise<UpdatedUserStatus>{
+async function changeTenantUserStatus(
+  input: PlatformUpdateUserStatusInput,
+): Promise<UpdatedUserStatus> {
  if (
     !Number.isInteger(input.targetUserId) ||
     input.targetUserId <= 0
@@ -292,17 +300,6 @@ export async function updateTenantUserStatus(input: UpdateUserStatusInput): Prom
     );
   }
 
-  if (
-    input.targetUserId ===
-      input.authenticatedUserId &&
-    normalizedStatus === "DISABLED"
-  ) {
-    throw new AppError(
-      409,
-      "You cannot disable your own account",
-    );
-  }
-
   const result = await updateUserStatus({
     tenantId: input.tenantId,
     targetUserId: input.targetUserId,
@@ -325,4 +322,27 @@ export async function updateTenantUserStatus(input: UpdateUserStatusInput): Prom
         "The final active dealership administrator cannot be disabled",
       );
   }
+}
+
+export async function updateTenantUserStatus(
+  input: UpdateUserStatusInput,
+): Promise<UpdatedUserStatus> {
+  if (
+    typeof input.status === "string" &&
+    input.targetUserId === input.authenticatedUserId &&
+    input.status.trim().toUpperCase() === "DISABLED"
+  ) {
+    throw new AppError(
+      409,
+      "You cannot disable your own account",
+    );
+  }
+
+  return changeTenantUserStatus(input);
+}
+
+export async function updateTenantUserStatusAsPlatform(
+  input: PlatformUpdateUserStatusInput,
+): Promise<UpdatedUserStatus> {
+  return changeTenantUserStatus(input);
 }

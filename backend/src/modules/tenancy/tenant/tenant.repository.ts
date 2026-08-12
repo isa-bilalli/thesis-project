@@ -10,6 +10,9 @@ export interface TenantListItem {
   currencyCode: string;
   timezone: string;
   status: TenantStatus;
+  primaryLocationCity: string | null;
+  locationCount: number;
+  userCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -132,6 +135,26 @@ export async function getAllTenants(): Promise<TenantListItem[]> {
         t.currency_code AS currencyCode,
         t.timezone,
         t.status,
+        (
+          SELECT l.city
+          FROM locations l
+          WHERE l.tenant_id = t.id
+            AND l.is_primary = TRUE
+            AND l.deleted_at IS NULL
+          LIMIT 1
+        ) AS primaryLocationCity,
+        (
+          SELECT COUNT(*)
+          FROM locations l
+          WHERE l.tenant_id = t.id
+            AND l.deleted_at IS NULL
+        ) AS locationCount,
+        (
+          SELECT COUNT(*)
+          FROM users u
+          WHERE u.tenant_id = t.id
+            AND u.deleted_at IS NULL
+        ) AS userCount,
         t.created_at AS createdAt,
         t.updated_at AS updatedAt
       FROM tenants t
@@ -156,6 +179,26 @@ export async function findTenantById(
         t.currency_code AS currencyCode,
         t.timezone,
         t.status,
+        (
+          SELECT l.city
+          FROM locations l
+          WHERE l.tenant_id = t.id
+            AND l.is_primary = TRUE
+            AND l.deleted_at IS NULL
+          LIMIT 1
+        ) AS primaryLocationCity,
+        (
+          SELECT COUNT(*)
+          FROM locations l
+          WHERE l.tenant_id = t.id
+            AND l.deleted_at IS NULL
+        ) AS locationCount,
+        (
+          SELECT COUNT(*)
+          FROM users u
+          WHERE u.tenant_id = t.id
+            AND u.deleted_at IS NULL
+        ) AS userCount,
         t.created_at AS createdAt,
         t.updated_at AS updatedAt
       FROM tenants t
@@ -236,6 +279,70 @@ export async function createTenantWithPrimaryLocation(
         ],
       );
 
+    await connection.execute(
+      `
+        INSERT INTO roles (
+          tenant_id,
+          name,
+          code,
+          description,
+          is_system
+        )
+        VALUES
+          (?, 'Dealership Administrator', 'DEALERSHIP_ADMIN', 'Full dealership access', TRUE),
+          (?, 'Sales Manager', 'SALES_MANAGER', 'Manages inventory, CRM and sales operations', TRUE),
+          (?, 'Salesperson', 'SALESPERSON', 'Handles customers, leads, offers and reservations', TRUE)
+      `,
+      [tenantId, tenantId, tenantId],
+    );
+
+    await connection.execute(
+      `
+        INSERT INTO role_permissions (
+          tenant_id,
+          role_id,
+          permission_id
+        )
+        SELECT
+          ?,
+          r.id,
+          p.id
+        FROM roles r
+        CROSS JOIN permissions p
+        WHERE r.tenant_id = ?
+          AND (
+            r.code = 'DEALERSHIP_ADMIN'
+            OR (
+              r.code = 'SALES_MANAGER'
+              AND p.code IN (
+                'inventory.read',
+                'inventory.financials.read',
+                'inventory.write',
+                'inventory.reserve',
+                'crm.read',
+                'crm.write',
+                'sales.read',
+                'sales.create_offer',
+                'sales.complete',
+                'reports.read'
+              )
+            )
+            OR (
+              r.code = 'SALESPERSON'
+              AND p.code IN (
+                'inventory.read',
+                'inventory.reserve',
+                'crm.read',
+                'crm.write',
+                'sales.read',
+                'sales.create_offer'
+              )
+            )
+          )
+      `,
+      [tenantId, tenantId],
+    );
+
     const [tenantRows] =
       await connection.execute<TenantListRow[]>(
         `
@@ -248,6 +355,26 @@ export async function createTenantWithPrimaryLocation(
             t.currency_code AS currencyCode,
             t.timezone,
             t.status,
+            (
+              SELECT l.city
+              FROM locations l
+              WHERE l.tenant_id = t.id
+                AND l.is_primary = TRUE
+                AND l.deleted_at IS NULL
+              LIMIT 1
+            ) AS primaryLocationCity,
+            (
+              SELECT COUNT(*)
+              FROM locations l
+              WHERE l.tenant_id = t.id
+                AND l.deleted_at IS NULL
+            ) AS locationCount,
+            (
+              SELECT COUNT(*)
+              FROM users u
+              WHERE u.tenant_id = t.id
+                AND u.deleted_at IS NULL
+            ) AS userCount,
             t.created_at AS createdAt,
             t.updated_at AS updatedAt
           FROM tenants t
@@ -391,6 +518,26 @@ export async function updateTenant(
           t.currency_code AS currencyCode,
           t.timezone,
           t.status,
+          (
+            SELECT l.city
+            FROM locations l
+            WHERE l.tenant_id = t.id
+              AND l.is_primary = TRUE
+              AND l.deleted_at IS NULL
+            LIMIT 1
+          ) AS primaryLocationCity,
+          (
+            SELECT COUNT(*)
+            FROM locations l
+            WHERE l.tenant_id = t.id
+              AND l.deleted_at IS NULL
+          ) AS locationCount,
+          (
+            SELECT COUNT(*)
+            FROM users u
+            WHERE u.tenant_id = t.id
+              AND u.deleted_at IS NULL
+          ) AS userCount,
           t.created_at AS createdAt,
           t.updated_at AS updatedAt
         FROM tenants t

@@ -1,6 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
 import { AppError } from "../../../shared/errors/app-error.js";
 import {
+  createTenantUser,
+  listAssignableRoles,
+  listUsers,
+  updateTenantUserStatusAsPlatform,
+} from "../../identity/user/user.service.js";
+import { getLocationsByTenant } from "../location/location.service.js";
+import {
   createTenant,
   getTenantById,
   listTenants,
@@ -248,4 +255,142 @@ export async function getTenantByIdController(request: Request, response: Respon
     }catch(err){
         next(err);
     }
+}
+
+export async function listPlatformTenantLocationsController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!request.platformAuth) {
+      throw new AppError(401, "Platform authentication required");
+    }
+
+    const tenantId = Number(request.params.tenantId);
+    await getTenantById(tenantId);
+    const locations = await getLocationsByTenant(tenantId);
+
+    response.status(200).json({ locations });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function listPlatformTenantUsersController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!request.platformAuth) {
+      throw new AppError(401, "Platform authentication required");
+    }
+
+    const tenantId = Number(request.params.tenantId);
+    await getTenantById(tenantId);
+    const users = await listUsers(tenantId);
+
+    response.status(200).json({ users });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function listPlatformTenantRolesController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!request.platformAuth) {
+      throw new AppError(401, "Platform authentication required");
+    }
+
+    const tenantId = Number(request.params.tenantId);
+    await getTenantById(tenantId);
+    const roles = await listAssignableRoles(tenantId);
+
+    response.status(200).json({ roles });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function createPlatformTenantUserController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!request.platformAuth) {
+      throw new AppError(401, "Platform authentication required");
+    }
+
+    const tenantId = Number(request.params.tenantId);
+    await getTenantById(tenantId);
+
+    const {
+      defaultLocationId,
+      firstName,
+      lastName,
+      email,
+      phone,
+      password,
+      roleCode,
+    } = request.body ?? {};
+
+    if (
+      typeof defaultLocationId !== "number" ||
+      typeof firstName !== "string" ||
+      typeof lastName !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      typeof roleCode !== "string" ||
+      (phone !== undefined && phone !== null && typeof phone !== "string")
+    ) {
+      throw new AppError(400, "Invalid user creation request");
+    }
+
+    const user = await createTenantUser({
+      tenantId,
+      assignedByUserId: null,
+      defaultLocationId,
+      firstName,
+      lastName,
+      email,
+      phone,
+      password,
+      roleCode,
+    });
+
+    response.status(201).json({ user });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updatePlatformTenantUserStatusController(
+  request: Request,
+  response: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    if (!request.platformAuth) {
+      throw new AppError(401, "Platform authentication required");
+    }
+
+    const tenantId = Number(request.params.tenantId);
+    await getTenantById(tenantId);
+
+    const user = await updateTenantUserStatusAsPlatform({
+      tenantId,
+      targetUserId: Number(request.params.userId),
+      status: request.body?.status,
+    });
+
+    response.status(200).json({ user });
+  } catch (error) {
+    next(error);
+  }
 }
