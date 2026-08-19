@@ -96,6 +96,13 @@ export async function getCurrentTenantUser(tenantId:number, userId:number) {
     return {
         id: user.id,
         tenantId: user.tenantId,
+        tenant: {
+          id: user.tenantId,
+          name: user.tenantName,
+          slug: user.tenantSlug,
+          currencyCode: user.tenantCurrencyCode,
+          timezone: user.tenantTimezone,
+        },
         defaultLocationId: user.defaultLocationId,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -153,6 +160,13 @@ export async function loginTenantUser(input: LoginInput) {
     user: {
       id: user.id,
       tenantId: user.tenantId,
+      tenant: {
+        id: user.tenantId,
+        name: user.tenantName,
+        slug: user.tenantSlug,
+        currencyCode: user.tenantCurrencyCode,
+        timezone: user.tenantTimezone,
+      },
       defaultLocationId: user.defaultLocationId,
       firstName: user.firstName,
       lastName: user.lastName,

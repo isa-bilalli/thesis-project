@@ -4,6 +4,10 @@ import { database } from "../../../config/database";
 interface TenantUserRow extends RowDataPacket {
   id: number;
   tenantId: number;
+  tenantName: string;
+  tenantSlug: string;
+  tenantCurrencyCode: string;
+  tenantTimezone: string;
   defaultLocationId: number | null;
   firstName: string;
   lastName: string;
@@ -20,6 +24,10 @@ interface AuthorizationRow extends RowDataPacket {
 export interface TenantAuthUser {
   id: number;
   tenantId: number;
+  tenantName: string;
+  tenantSlug: string;
+  tenantCurrencyCode: string;
+  tenantTimezone: string;
   defaultLocationId: number | null;
   firstName: string;
   lastName: string;
@@ -36,6 +44,10 @@ export interface UserAuthorization {
 interface CurrentTenantUserRow extends RowDataPacket {
     id: number;
     tenantId: number;
+    tenantName: string;
+    tenantSlug: string;
+    tenantCurrencyCode: string;
+    tenantTimezone: string;
     defaultLocationId: number | null;
     firstName: string;
     lastName: string;
@@ -205,6 +217,10 @@ export async function findActiveTenantUserById(tenantId: number, userId: number)
             SELECT
             u.id,
             u.tenant_id AS tenantId,
+            t.name AS tenantName,
+            t.slug AS tenantSlug,
+            t.currency_code AS tenantCurrencyCode,
+            t.timezone AS tenantTimezone,
             u.default_location_id AS defaultLocationId,
             u.first_name AS firstName,
             u.last_name AS lastName,
@@ -232,6 +248,10 @@ export async function findTenantUserForLogin(
       SELECT
         u.id,
         u.tenant_id AS tenantId,
+        t.name AS tenantName,
+        t.slug AS tenantSlug,
+        t.currency_code AS tenantCurrencyCode,
+        t.timezone AS tenantTimezone,
         u.default_location_id AS defaultLocationId,
         u.first_name AS firstName,
         u.last_name AS lastName,

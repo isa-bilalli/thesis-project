@@ -8,6 +8,7 @@ import { tenancyRouter } from "./modules/tenancy/tenancy.routes";
 import { inventoryRouter } from "./modules/inventory/inventory.routes";
 import { crmRouter } from "./modules/crm/crm.routes";
 import { salesRouter } from "./modules/sales/sales.routes";
+import { dashboardRouter } from "./modules/dashboard/dashboard.routes";
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.get("/api/health", async (req, res) =>{
 })
 
 app.use("/api", identityRouter);
+app.use("/api", dashboardRouter);
 app.use("/api", tenancyRouter);
 app.use("/api", inventoryRouter);
 app.use("/api", crmRouter);

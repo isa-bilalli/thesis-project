@@ -15,6 +15,13 @@ export type PermissionCode =
 export interface AuthUser {
   id: number
   tenantId: number
+  tenant: {
+    id: number
+    name: string
+    slug: string
+    currencyCode: string
+    timezone: string
+  }
   defaultLocationId: number | null
   firstName: string
   lastName: string
