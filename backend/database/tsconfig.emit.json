@@ -1,8 +1,9 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "noEmit": true,
+    "noEmit": false,
     "rootDir": "..",
+    "outDir": "../.database-dist",
     "types": ["node"]
   },
   "include": [

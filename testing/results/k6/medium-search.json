@@ -1,0 +1,198 @@
+{
+    "metrics": {
+        "http_req_sending": {
+            "p(99)": 0.5678999999999967,
+            "max": 16.9285,
+            "avg": 0.02247124249776528,
+            "min": 0,
+            "med": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "data_received": {
+            "rate": 469799.4456007053,
+            "count": 84687915
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "http_req_receiving": {
+            "p(95)": 5.07985,
+            "p(99)": 8.27351,
+            "max": 159.9756,
+            "avg": 1.343356799897847,
+            "min": 0,
+            "med": 0.6294,
+            "p(90)": 3.6743
+        },
+        "vus": {
+            "value": 10,
+            "min": 10,
+            "max": 10
+        },
+        "http_req_waiting": {
+            "med": 52.8878,
+            "p(90)": 168.0332,
+            "p(95)": 208.22495,
+            "p(99)": 290.5764299999997,
+            "max": 3439.232,
+            "avg": 77.3973059762488,
+            "min": 3.8795
+        },
+        "data_sent": {
+            "count": 5595028,
+            "rate": 31037.971031881265
+        },
+        "http_reqs": {
+            "count": 7831,
+            "rate": 43.44184714547669
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(99)": 291.02561999999995,
+            "max": 3439.232,
+            "avg": 78.76313401864437,
+            "min": 11.2424,
+            "med": 54.1717,
+            "p(90)": 169.8268,
+            "p(95)": 210.2184
+        },
+        "iterations": {
+            "count": 7821,
+            "rate": 43.386372944039486
+        },
+        "vus_max": {
+            "value": 10,
+            "min": 10,
+            "max": 10
+        },
+        "checks": {
+            "passes": 7831,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_blocked": {
+            "min": 0,
+            "med": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 9.4994,
+            "avg": 0.011221900140467374
+        },
+        "http_req_connecting": {
+            "avg": 0.003658268420380539,
+            "min": 0,
+            "med": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 3.2178
+        },
+        "http_req_duration": {
+            "max": 3439.232,
+            "avg": 78.76313401864437,
+            "min": 11.2424,
+            "med": 54.1717,
+            "p(90)": 169.8268,
+            "p(95)": 210.2184,
+            "p(99)": 291.02561999999995,
+            "thresholds": {
+                "p(95)<750": false
+            }
+        },
+        "http_req_failed": {
+            "fails": 7831,
+            "passes": 0,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "iteration_duration": {
+            "max": 3837.1725,
+            "avg": 230.25573718194659,
+            "min": 161.7578,
+            "med": 205.3446,
+            "p(90)": 321.4027,
+            "p(95)": 361.374,
+            "p(99)": 447.3325800000003
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "login succeeded": {
+                    "name": "login succeeded",
+                    "path": "::login succeeded",
+                    "id": "904b20f978ea9858883ce098334e6bab",
+                    "passes": 10,
+                    "fails": 0
+                },
+                "inventory_common_search HTTP 200": {
+                    "fails": 0,
+                    "name": "inventory_common_search HTTP 200",
+                    "path": "::inventory_common_search HTTP 200",
+                    "id": "4c494507173fa5c60eeba6db71a42c1e",
+                    "passes": 991
+                },
+                "sale_deep_page HTTP 200": {
+                    "name": "sale_deep_page HTTP 200",
+                    "path": "::sale_deep_page HTTP 200",
+                    "id": "be5577e59623627631358bd22f9e0f5d",
+                    "passes": 976,
+                    "fails": 0
+                },
+                "inventory_deep_page HTTP 200": {
+                    "name": "inventory_deep_page HTTP 200",
+                    "path": "::inventory_deep_page HTTP 200",
+                    "id": "01f2d1ceceb6e4a96fa752f9e9cdba2e",
+                    "passes": 913,
+                    "fails": 0
+                },
+                "customer_selective_search HTTP 200": {
+                    "name": "customer_selective_search HTTP 200",
+                    "path": "::customer_selective_search HTTP 200",
+                    "id": "969db7868671e5252265091191045f37",
+                    "passes": 1012,
+                    "fails": 0
+                },
+                "customer_common_search HTTP 200": {
+                    "fails": 0,
+                    "name": "customer_common_search HTTP 200",
+                    "path": "::customer_common_search HTTP 200",
+                    "id": "c9166fa277a9055fc94c26346092f564",
+                    "passes": 986
+                },
+                "customer_deep_page HTTP 200": {
+                    "fails": 0,
+                    "name": "customer_deep_page HTTP 200",
+                    "path": "::customer_deep_page HTTP 200",
+                    "id": "0743e88bbba31a6622c025f661057b42",
+                    "passes": 985
+                },
+                "lead_deep_page HTTP 200": {
+                    "id": "1df790b3d234c1e54639002bf0a457c5",
+                    "passes": 998,
+                    "fails": 0,
+                    "name": "lead_deep_page HTTP 200",
+                    "path": "::lead_deep_page HTTP 200"
+                },
+                "inventory_selective_search HTTP 200": {
+                    "name": "inventory_selective_search HTTP 200",
+                    "path": "::inventory_selective_search HTTP 200",
+                    "id": "428f16437d89b297a29eeb6c7b25bff1",
+                    "passes": 960,
+                    "fails": 0
+                }
+            }
+    }
+}

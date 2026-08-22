@@ -4,7 +4,7 @@ import path from "node:path";
 import mysql, { type RowDataPacket } from "mysql2/promise";
 import { env } from "../src/config/env.js";
 
-const migrationsDirectory = path.join(__dirname, "migrations");
+const migrationsDirectory = path.resolve(process.cwd(), "database", "migrations");
 
 interface AppliedMigration extends RowDataPacket {
   filename: string;

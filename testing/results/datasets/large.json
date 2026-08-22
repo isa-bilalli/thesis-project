@@ -1,0 +1,33 @@
+{
+  "database": "thesis_project_perf",
+  "scale": "large",
+  "configured": {
+    "vehicles": 25000,
+    "customers": 50000,
+    "leads": 75000,
+    "activities": 150000,
+    "testDrives": 20000,
+    "offers": 25000,
+    "reservations": 7500,
+    "sales": 10000
+  },
+  "actual": {
+    "vehicles": 25000,
+    "customers": 50000,
+    "leads": 75000,
+    "activities": 150000,
+    "testDrives": 20000,
+    "offers": 25000,
+    "reservations": 7500,
+    "sales": 10000,
+    "leadVehicleInterests": 25000
+  },
+  "tenantId": 1,
+  "locationId": 1,
+  "adminUserId": 1,
+  "salespersonUserId": 2,
+  "salespersonEmail": "perf.salesperson@demo-motors.test",
+  "startedAt": "2026-08-19T10:58:18.356Z",
+  "finishedAt": "2026-08-19T10:58:42.280Z",
+  "durationSeconds": 23.924
+}

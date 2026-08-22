@@ -1,0 +1,14 @@
+{
+  "login": {
+    "performance": 60,
+    "accessibility": 100,
+    "best-practices": 96,
+    "seo": 82
+  },
+  "dashboard": {
+    "performance": 70,
+    "accessibility": 100,
+    "best-practices": 96,
+    "seo": 82
+  }
+}

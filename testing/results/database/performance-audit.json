@@ -1,0 +1,266 @@
+{
+  "capturedAt": "2026-08-19T11:02:21.101Z",
+  "database": {
+    "mysqlVersion": "8.0.44",
+    "databaseName": "thesis_project_perf"
+  },
+  "variables": [
+    {
+      "Variable_name": "innodb_buffer_pool_size",
+      "Value": "134217728"
+    },
+    {
+      "Variable_name": "max_connections",
+      "Value": "151"
+    },
+    {
+      "Variable_name": "performance_schema",
+      "Value": "ON"
+    }
+  ],
+  "counts": {
+    "vehicles": 25000,
+    "customers": 50000,
+    "leads": 75000,
+    "lead_activities": 150000,
+    "test_drives": 20000,
+    "offers": 25000,
+    "vehicle_reservations": 7500,
+    "sales": 10000
+  },
+  "explainAnalyze": {
+    "inventoryCommonSearch": [
+      "-> Limit: 20 row(s)  (cost=1895 rows=20) (actual time=61.1..61.4 rows=20 loops=1)\n    -> Nested loop inner join  (cost=1895 rows=12433) (actual time=61.1..61.4 rows=20 loops=1)\n        -> Sort: v.created_at DESC, v.id DESC  (cost=341 rows=12433) (actual time=60.9..60.9 rows=200 loops=1)\n            -> Filter: (v.deleted_at is null)  (cost=341 rows=12433) (actual time=0.157..44.9 rows=25000 loops=1)\n                -> Index lookup on v using uq_vehicles_tenant_stock (tenant_id=1)  (cost=341 rows=12433) (actual time=0.151..43.6 rows=25000 loops=1)\n        -> Filter: ((l.tenant_id = 1) and (concat_ws(' ',v.stock_number,coalesce(v.vin,''),v.make,v.model,coalesce(v.trim_level,''),l.`name`,l.`code`) like '%Performance%'))  (cost=0.25 rows=1) (actual time=0.00245..0.00246 rows=0.1 loops=200)\n            -> Single-row index lookup on l using PRIMARY (id=v.location_id)  (cost=0.25 rows=1) (actual time=608e-6..623e-6 rows=1 loops=200)\n"
+    ],
+    "customerCommonSearch": [
+      "-> Limit: 20 row(s)  (cost=752 rows=20) (actual time=145..145 rows=20 loops=1)\n    -> Sort: c.created_at DESC, c.id DESC, limit input to 20 row(s) per chunk  (cost=752 rows=24717) (actual time=145..145 rows=20 loops=1)\n        -> Filter: ((c.deleted_at is null) and (concat_ws(' ',coalesce(c.first_name,''),coalesce(c.last_name,''),coalesce(c.company_name,''),coalesce(c.email,''),c.phone,coalesce(c.secondary_phone,'')) like '%Performance%'))  (cost=752 rows=24717) (actual time=0.0859..143 rows=5000 loops=1)\n            -> Index lookup on c using idx_customers_tenant_phone (tenant_id=1)  (cost=752 rows=24717) (actual time=0.079..82.6 rows=50000 loops=1)\n"
+    ]
+  },
+  "statementDigests": [
+    {
+      "digestText": "INSERT INTO `lead_activities` ( `tenant_id` , `lead_id` , `user_id` , `activity_type` , `status` , `subject` , `details` , `outcome` , `completed_at` ) VALUES (...) /* , ... */",
+      "executions": 366,
+      "totalSeconds": "7.4845",
+      "averageMilliseconds": "20.449",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `leads` ( `tenant_id` , `location_id` , `customer_id` , `assigned_to_user_id` , `source` , `status` , `priority` , `budget_min` , `budget_max` , `next_follow_up_at` , `notes` , `created_by_user_id` ) VALUES (...) /* , ... */",
+      "executions": 183,
+      "totalSeconds": "4.5963",
+      "averageMilliseconds": "25.116",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `vehicles` ( `tenant_id` , `location_id` , `stock_number` , `vin` , `vehicle_condition` , `status` , `make` , `model` , `model_year` , `body_type` , `fuel_type` , `transmission` , `mileage_km` , `purchase_price` , `asking_price` , `minimum_price` , `created_by_user_id` ) VALUES (...) /* , ... */",
+      "executions": 61,
+      "totalSeconds": "3.8765",
+      "averageMilliseconds": "63.549",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "COMMIT",
+      "executions": 15298,
+      "totalSeconds": "3.8003",
+      "averageMilliseconds": "0.248",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `customers` ( `tenant_id` , `customer_type` , `first_name` , `last_name` , `email` , `phone` , `city` , `country_code` , `status` , `assigned_to_user_id` , `notes` , `created_by_user_id` ) VALUES (...) /* , ... */",
+      "executions": 122,
+      "totalSeconds": "3.2010",
+      "averageMilliseconds": "26.237",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "START TRANSACTION",
+      "executions": 15340,
+      "totalSeconds": "2.9276",
+      "averageMilliseconds": "0.191",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `offers` ( `tenant_id` , `location_id` , `offer_number` , `lead_id` , `customer_id` , `vehicle_id` , `salesperson_user_id` , `vehicle_price` , `discount_amount` , `tax_amount` , `fee_amount` , `status` , `valid_until` , `notes` ) VALUES (...) /* , ... */",
+      "executions": 61,
+      "totalSeconds": "2.1124",
+      "averageMilliseconds": "34.630",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `test_drives` ( `tenant_id` , `location_id` , `lead_id` , `customer_id` , `vehicle_id` , `salesperson_user_id` , `scheduled_start` , `scheduled_end` , `status` , `notes` , `created_by_user_id` ) VALUES (...) /* , ... */",
+      "executions": 49,
+      "totalSeconds": "1.5531",
+      "averageMilliseconds": "31.696",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `sales` ( `tenant_id` , `location_id` , `sale_number` , `customer_id` , `vehicle_id` , `salesperson_user_id` , `lead_id` , `sale_date` , `vehicle_price` , `discount_amount` , `tax_amount` , `fee_amount` , `vehicle_cost_snapshot` , `payment_method` , `status` , `completed_at` , `notes` , `created_by_user_id` ) VALUES (...) /* , ... */",
+      "executions": 25,
+      "totalSeconds": "1.2829",
+      "averageMilliseconds": "51.317",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `lead_vehicles` ( `tenant_id` , `lead_id` , `vehicle_id` , `is_primary` , `interest_notes` ) VALUES ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... , TRUE , ? ) , ( ?, ... ,",
+      "executions": 61,
+      "totalSeconds": "1.1538",
+      "averageMilliseconds": "18.915",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "INSERT INTO `vehicle_reservations` ( `tenant_id` , `reservation_number` , `vehicle_id` , `customer_id` , `lead_id` , `salesperson_user_id` , `agreed_price` , `status` , `reserved_at` , `expires_at` , `notes` , `created_by_user_id` ) VALUES (...) /* , ... */",
+      "executions": 19,
+      "totalSeconds": "0.8578",
+      "averageMilliseconds": "45.146",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `sales`",
+      "executions": 3,
+      "totalSeconds": "0.3041",
+      "averageMilliseconds": "101.367",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `customers`",
+      "executions": 3,
+      "totalSeconds": "0.2987",
+      "averageMilliseconds": "99.553",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `vehicles`",
+      "executions": 3,
+      "totalSeconds": "0.2908",
+      "averageMilliseconds": "96.927",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `vehicle_reservations`",
+      "executions": 3,
+      "totalSeconds": "0.2800",
+      "averageMilliseconds": "93.320",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `leads`",
+      "executions": 3,
+      "totalSeconds": "0.2643",
+      "averageMilliseconds": "88.091",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `offers`",
+      "executions": 3,
+      "totalSeconds": "0.2335",
+      "averageMilliseconds": "77.848",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `test_drives`",
+      "executions": 3,
+      "totalSeconds": "0.2206",
+      "averageMilliseconds": "73.522",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `lead_activities`",
+      "executions": 3,
+      "totalSeconds": "0.1831",
+      "averageMilliseconds": "61.046",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "TRUNCATE TABLE `lead_vehicles`",
+      "executions": 3,
+      "totalSeconds": "0.1580",
+      "averageMilliseconds": "52.655",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "EXPLAIN ANALYZE SELECT `c` . `id` , `c` . `first_name` , `c` . `last_name` , `c` . `email` , `c` . `phone` FROM `customers` `c` WHERE `c` . `tenant_id` = ? AND `c` . `deleted_at` IS NULL AND `CONCAT_WS` ( ? , COALESCE ( `c` . `first_name` , ? ) , COALESCE ( `c` . `last_name` , ? ) , COALESCE ( `c` . `company_name` , ? ) , COALESCE ( `c` . `email` , ? ) , `c` . `phone` , COALESCE ( `c` . `secondary_phone` , ? ) ) LIKE ? ORDER BY `c` . `created_at` DESC , `c` . `id` DESC LIMIT ? OFFSET ?",
+      "executions": 1,
+      "totalSeconds": "0.1462",
+      "averageMilliseconds": "146.182",
+      "rowsExamined": 50020,
+      "rowsSent": 1,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "CREATE TABLE IF NOT EXISTS `refresh_tokens` ( `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY , `tenant_id` INTEGER UNSIGNED NOT NULL , `user_id` INTEGER UNSIGNED NOT NULL , `token_hash` CHARACTER (?) NOT NULL , `expires_at` DATETIME (?) NOT NULL , `revoked_at` DATETIME (?) NULL , `replaced_by_token_id` INTEGER UNSIGNED NULL , `revocation_reason` VARCHARACTER (?) NULL , `created_ip` VARCHARACTER (?) NULL , `user_agent` VARCHARACTER (?) NULL , `created_at` DATETIME (?) NOT NULL DEFAULT NOW (?) , CONSTRAINT `uq_refresh_tokens_hash` UNIQUE ( `token_hash` ) , CONSTRAINT `fk_refresh_tokens_tenant` FOREIGN KEY ( `tenant_id` ) REFERENCES `tenants` ( `id` ) ON DELETE RESTRICT , CONSTRAINT `fk_refresh_tokens_user` FOREIGN KEY ( `user_id` ) REFERENCES `users` ( `id` ) ON DELETE CASCADE , CONSTRAINT `fk_refresh_tokens_replacement` FOREIGN KEY ( `replaced_by_token_id` ) REFERENCES `refresh_tokens` ( `id` ) ON DELETE SET NULL , INDEX `idx_refresh_tokens_user` ( `tenant_id` , `user_id` ) , INDEX `idx_refresh_tokens_expiry` ( `expires_at` ) , INDEX `idx_refresh_tokens_revoked` ( `revoked_at` ) )",
+      "executions": 1,
+      "totalSeconds": "0.1420",
+      "averageMilliseconds": "141.971",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "CREATE TABLE IF NOT EXISTS `sales` ( `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY , `tenant_id` INTEGER UNSIGNED NOT NULL , `location_id` INTEGER UNSIGNED NOT NULL , `sale_number` VARCHARACTER (?) NOT NULL , `customer_id` INTEGER UNSIGNED NOT NULL , `vehicle_id` INTEGER UNSIGNED NOT NULL , `salesperson_user_id` INTEGER UNSIGNED NOT NULL , `lead_id` INTEGER UNSIGNED NULL , `offer_id` INTEGER UNSIGNED NULL , `reservation_id` INTEGER UNSIGNED NULL , `sale_date` DATETIME (?) NOT NULL , `vehicle_price` DECIMAL (...) NOT NULL , `discount_amount` DECIMAL (...) NOT NULL DEFAULT ? , `tax_amount` DECIMAL (...) NOT NULL DEFAULT ? , `fee_amount` DECIMAL (...) NOT NULL DEFAULT ? , `total_amount` DECIMAL (...) GENERATED ALWAYS AS ( `vehicle_price` - `discount_amount` + `tax_amount` + `fee_amount` ) STORED , `vehicle_cost_snapshot` DECIMAL (...) NOT NULL , `payment_method` VARCHARACTER (?) NULL , STATUS VARCHARACTER (?) NOT NULL DEFAULT ? , `completed_at` DATETIME (?) NULL , `cancelled_at` DATETIME (?) NULL , `cancellation_reason` VARCHARACTER (?) NULL , `notes` TEXT NULL , `created_by_user_id` INTEGER UNSIGNED NOT NULL , `created_at` DATETIME (?) NOT NULL DEFAULT NOW (?) , `updated_at` DATETIME (?) NOT NULL DEFAULT NOW (?) ON UPDATE NOW (?) , CONSTRAINT `uq_sales_tenant_number` UNIQUE ( `tenant_id` , `sale_number` ) , CONSTRAINT `fk_sales_tenant` FOREIGN KEY ( `tenant_id` ) REFERENCES `tenants` ( `id` ) ON DELETE RESTRICT , CONSTRAINT `fk_sales_location` FOREIGN KEY ( `location_id` ) REFERENCES `locations` ( `id` ) ON DELETE RESTRICT , CONSTRAINT `fk_sales_customer` FOREIGN KEY (",
+      "executions": 1,
+      "totalSeconds": "0.1245",
+      "averageMilliseconds": "124.504",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "CREATE TABLE IF NOT EXISTS `vehicle_reservations` ( `id` INTEGER UNSIGNED AUTO_INCREMENT PRIMARY KEY , `tenant_id` INTEGER UNSIGNED NOT NULL , `reservation_number` VARCHARACTER (?) NOT NULL , `vehicle_id` INTEGER UNSIGNED NOT NULL , `customer_id` INTEGER UNSIGNED NOT NULL , `lead_id` INTEGER UNSIGNED NULL , `offer_id` INTEGER UNSIGNED NULL , `salesperson_user_id` INTEGER UNSIGNED NOT NULL , `agreed_price` DECIMAL (...) NULL , STATUS VARCHARACTER (?) NOT NULL DEFAULT ? , `reserved_at` DATETIME (?) NOT NULL , `expires_at` DATETIME (?) NOT NULL , `cancelled_at` DATETIME (?) NULL , `cancellation_reason` VARCHARACTER (?) NULL , `notes` TEXT NULL , `created_by_user_id` INTEGER UNSIGNED NOT NULL , `created_at` DATETIME (?) NOT NULL DEFAULT NOW (?) , `updated_at` DATETIME (?) NOT NULL DEFAULT NOW (?) ON UPDATE NOW (?) , CONSTRAINT `uq_reservations_tenant_number` UNIQUE ( `tenant_id` , `reservation_number` ) , CONSTRAINT `fk_reservations_tenant` FOREIGN KEY ( `tenant_id` ) REFERENCES `tenants` ( `id` ) ON DELETE RESTRICT , CONSTRAINT `fk_reservations_vehicle` FOREIGN KEY ( `vehicle_id` ) REFERENCES `vehicles` ( `id` ) ON DELETE RESTRICT , CONSTRAINT `fk_reservations_customer` FOREIGN KEY ( `customer_id` ) REFERENCES `customers` ( `id` ) ON DELETE RESTRICT , CONSTRAINT `fk_reservations_lead` FOREIGN KEY ( `lead_id` ) REFERENCES `leads` ( `id` ) ON DELETE SET NULL , CONSTRAINT `fk_reservations_offer` FOREIGN KEY ( `offer_id` ) REFERENCES `offers` ( `id` ) ON DELETE SET NULL , CONSTRAINT `fk_reservations_salesperson` FOREIGN KEY (",
+      "executions": 1,
+      "totalSeconds": "0.1078",
+      "averageMilliseconds": "107.783",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    },
+    {
+      "digestText": "ALTER TABLE `users` ADD COLUMN `auth_version` INTEGER UNSIGNED NOT NULL DEFAULT ? AFTER `password_hash`",
+      "executions": 1,
+      "totalSeconds": "0.1045",
+      "averageMilliseconds": "104.537",
+      "rowsExamined": 0,
+      "rowsSent": 0,
+      "noIndexUsed": 0
+    }
+  ]
+}

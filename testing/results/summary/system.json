@@ -1,0 +1,11 @@
+{
+  "capturedAt": "2026-08-19T11:19:59.897Z",
+  "platform": "win32",
+  "release": "10.0.26200",
+  "cpuModel": "11th Gen Intel(R) Core(TM) i5-11400H @ 2.70GHz",
+  "logicalCpuCount": 12,
+  "totalMemoryGb": 7.729377746582031,
+  "freeMemoryGbAtCapture": 1.1228256225585938,
+  "nodeVersion": "v22.14.0",
+  "architecture": "x64"
+}

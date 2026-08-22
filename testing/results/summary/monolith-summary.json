@@ -1,0 +1,840 @@
+{
+  "generatedAt": "2026-08-19T11:14:54.665Z",
+  "k6": {
+    "large-search": {
+      "http": {
+        "avg": 495.5645207601294,
+        "med": 409.2378,
+        "p90": 1113.2224,
+        "p95": 1225.9896199999998,
+        "p99": 1416.7444359999995,
+        "max": 2684.8351,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 15.431140641798258,
+        "count": 2789
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 15.375812062946347,
+        "count": 2779
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-auth-load": {
+      "http": {
+        "avg": 22209.11207685325,
+        "med": 27777.2751,
+        "p90": 38761.3547,
+        "p95": 40433.9418,
+        "p99": 43363.71342,
+        "max": 44212.7767,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 2.3931858345440524,
+        "count": 661
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 2.3931858345440524,
+        "count": 661
+      },
+      "droppedIterations": 1229,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-average": {
+      "http": {
+        "avg": 85.46321649074731,
+        "med": 53.90105,
+        "p90": 192.00639000000012,
+        "p95": 235.847445,
+        "p99": 319.6970749999999,
+        "max": 7152.1511,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": 57.28368483926196,
+        "med": 45.1461,
+        "p90": 95.94848000000002,
+        "p95": 127.60008,
+        "p99": 199.70329199999932,
+        "max": 399.4021,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": 47.47211946360155,
+        "med": 39.89725,
+        "p90": 76.02078,
+        "p95": 97.78590500000003,
+        "p99": 154.4905660000008,
+        "max": 348.6797,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 48.604737902302226,
+        "count": 29180
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 48.57142416830476,
+        "count": 29160
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-baseline": {
+      "http": {
+        "avg": 61.50584913761481,
+        "med": 37.6842,
+        "p90": 134.08196,
+        "p95": 202.11074,
+        "p99": 314.5334039999998,
+        "max": 1258.892,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": 38.8956071428571,
+        "med": 34.9805,
+        "p90": 47.672,
+        "p95": 53.607124999999996,
+        "p99": 186.3216,
+        "max": 314.7159,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": 32.84456192468621,
+        "med": 29.7277,
+        "p90": 46.59716,
+        "p95": 58.53256999999997,
+        "p99": 77.18532900000001,
+        "max": 326.2,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 8.25413426382828,
+        "count": 2725
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 8.223843862860104,
+        "count": 2715
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-breakpoint": {
+      "http": {
+        "avg": 1379.3987388358116,
+        "med": 1187.02275,
+        "p90": 2953.64565,
+        "p95": 3479.3876999999998,
+        "p99": 4269.494600000001,
+        "max": 6182.2661,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 51.37525052547358,
+        "count": 16956
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 50.76926738646115,
+        "count": 16756
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-search": {
+      "http": {
+        "avg": 78.76313401864437,
+        "med": 54.1717,
+        "p90": 169.8268,
+        "p95": 210.2184,
+        "p99": 291.02561999999995,
+        "max": 3439.232,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 43.44184714547669,
+        "count": 7831
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 43.386372944039486,
+        "count": 7821
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-soak": {
+      "http": {
+        "avg": 81.86594141164339,
+        "med": 50.3465,
+        "p90": 180.81686,
+        "p95": 228.58001000000004,
+        "p99": 334.93120999999996,
+        "max": 6754.9102,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": 55.85519028723509,
+        "med": 43.191,
+        "p90": 95.83237000000001,
+        "p95": 129.05526,
+        "p99": 213.0980649999997,
+        "max": 493.8995,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": 45.27710198131521,
+        "med": 37.0286,
+        "p90": 72.83076000000001,
+        "p95": 96.70199999999996,
+        "p99": 161.05472800000024,
+        "max": 526.0122,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 48.98589680806638,
+        "count": 88195
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 48.952571179533194,
+        "count": 88135
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-spike": {
+      "http": {
+        "avg": 1062.0337766916114,
+        "med": 676.01495,
+        "p90": 1401.86148,
+        "p95": 1593.7869199999996,
+        "p99": 22386.85631399999,
+        "max": 31195.4988,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": 856.6373908208288,
+        "med": 880.5553,
+        "p90": 1567.8714800000005,
+        "p95": 1728.2642199999998,
+        "p99": 1864.4874680000005,
+        "max": 17043.0602,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": 599.4123998234785,
+        "med": 556.8151,
+        "p90": 1082.88272,
+        "p95": 1185.3147199999999,
+        "p99": 1288.848292,
+        "max": 18921.5532,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 30.532747502989043,
+        "count": 6414
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 30.056714645131404,
+        "count": 6314
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "medium-stress": {
+      "http": {
+        "avg": 479.5593096844326,
+        "med": 361.71835,
+        "p90": 1105.3032200000014,
+        "p95": 1300.2709849999999,
+        "p99": 1670.1566569999993,
+        "max": 2629.2166,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": 542.770697955664,
+        "med": 378.42565,
+        "p90": 1312.0301399999998,
+        "p95": 1503.7877399999998,
+        "p99": 1785.4350009999991,
+        "max": 2028.7007,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": 375.7501808168025,
+        "med": 268.0013,
+        "p90": 907.04174,
+        "p95": 1027.4568,
+        "p99": 1273.259392,
+        "max": 1444.7806,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 48.82209888813905,
+        "count": 23450
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 48.61390230439432,
+        "count": 23350
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "profile-workload": {
+      "http": {
+        "avg": 822.9309880617973,
+        "med": 716.56715,
+        "p90": 1375.8520600000002,
+        "p95": 1503.52705,
+        "p99": null,
+        "max": 3223.352,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 11.770135898022142,
+        "count": 1424
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 11.687480449300075,
+        "count": 1414
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "reservation-contention": {
+      "http": {
+        "avg": 60.07518400000001,
+        "med": 55.4544,
+        "p90": 72.01984,
+        "p95": 73.71227999999999,
+        "p99": 218.23399999999964,
+        "max": 263.7782,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 64.1176893010659,
+        "count": 25
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 51.294151440852715,
+        "count": 20
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": 1,
+      "reservationConflicts": 10,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "sale-contention": {
+      "http": {
+        "avg": 76.18602222222223,
+        "med": 83.767,
+        "p90": 94.25498,
+        "p95": 96.2065,
+        "p99": 222.86409199999974,
+        "max": 267.2346,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 61.876082831449544,
+        "count": 27
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 45.83413543070337,
+        "count": 20
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": 1,
+      "saleConflicts": 19
+    },
+    "small-search": {
+      "http": {
+        "avg": 10.5972385819027,
+        "med": 6.49655,
+        "p90": 15.839420000000002,
+        "p95": 18.782765,
+        "p99": 27.238791000000003,
+        "max": 2561.4115,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 62.08064214688644,
+        "count": 11184
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 62.025133704337364,
+        "count": 11174
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    },
+    "small-smoke": {
+      "http": {
+        "avg": 12.950306451612908,
+        "med": 7.7354,
+        "p90": 15.09684,
+        "p95": 23.60681999999999,
+        "p99": 62.67423999999946,
+        "max": 354.2342,
+        "rate": null,
+        "count": null
+      },
+      "dashboard": {
+        "avg": 8.667225,
+        "med": 7.0123,
+        "p90": 11.086870000000001,
+        "p95": 17.24359999999999,
+        "p99": 23.005840000000006,
+        "max": 24.4464,
+        "rate": null,
+        "count": null
+      },
+      "inventory": {
+        "avg": 5.657555,
+        "med": 5.23205,
+        "p90": 7.344720000000001,
+        "p95": 7.8968900000000035,
+        "p99": 11.293937999999994,
+        "max": 12.1432,
+        "rate": null,
+        "count": null
+      },
+      "failureRate": null,
+      "requests": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 3.059971925843377,
+        "count": 93
+      },
+      "iterations": {
+        "avg": null,
+        "med": null,
+        "p90": null,
+        "p95": null,
+        "p99": null,
+        "max": null,
+        "rate": 3.027069001909577,
+        "count": 92
+      },
+      "droppedIterations": null,
+      "reservationSuccesses": null,
+      "reservationConflicts": null,
+      "saleSuccesses": null,
+      "saleConflicts": null
+    }
+  },
+  "runtime": {
+    "sampleCount": 4485,
+    "soakSampleCount": 1800,
+    "rssMb": {
+      "firstFiveMinuteAverage": 107.99134114583333,
+      "lastFiveMinuteAverage": 108.43315104166666,
+      "maximum": 110.46484375
+    },
+    "heapUsedMb": {
+      "firstFiveMinuteAverage": 31.784011510213215,
+      "lastFiveMinuteAverage": 31.792321268717448,
+      "maximum": 42.22833251953125
+    },
+    "cpuPercent": {
+      "average": 29.875656249912144,
+      "maximum": 100.07358351729212
+    },
+    "eventLoopMs": {
+      "p95SampleAverage": 29.782085555555515,
+      "p99SampleAverage": 34.30505277777781,
+      "maximum": 2235.564
+    }
+  }
+}

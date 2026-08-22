@@ -1,0 +1,357 @@
+{
+  "totalCpuProfileMilliseconds": 240440.229,
+  "cpuTop": [
+    {
+      "functionName": "_encipher",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 796,
+      "milliseconds": 27495.564,
+      "percent": 11.435508988805696
+    },
+    {
+      "functionName": "_encipher",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 796,
+      "milliseconds": 9949.338,
+      "percent": 4.137967278345921
+    },
+    {
+      "functionName": "next",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 1046,
+      "milliseconds": 1822.708,
+      "percent": 0.7580711462390098
+    },
+    {
+      "functionName": "createPublicKey",
+      "url": "node:internal/crypto/keys",
+      "lineNumber": 704,
+      "milliseconds": 674.853,
+      "percent": 0.2806739133491676
+    },
+    {
+      "functionName": "next",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 1046,
+      "milliseconds": 569.565,
+      "percent": 0.23688423620657922
+    },
+    {
+      "functionName": "_encipher",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 796,
+      "milliseconds": 462.23,
+      "percent": 0.19224320402722625
+    },
+    {
+      "functionName": "writeBuffer",
+      "url": "",
+      "lineNumber": 0,
+      "milliseconds": 432.812,
+      "percent": 0.18000814664005332
+    },
+    {
+      "functionName": "createPublicKey",
+      "url": "node:internal/crypto/keys",
+      "lineNumber": 704,
+      "milliseconds": 358.96,
+      "percent": 0.14929282071179528
+    },
+    {
+      "functionName": "createPublicKey",
+      "url": "node:internal/crypto/keys",
+      "lineNumber": 704,
+      "milliseconds": 342.476,
+      "percent": 0.14243706280948518
+    },
+    {
+      "functionName": "createPublicKey",
+      "url": "node:internal/crypto/keys",
+      "lineNumber": 704,
+      "milliseconds": 319.238,
+      "percent": 0.13277229078000918
+    },
+    {
+      "functionName": "MockBuffer",
+      "url": "file:///E:/thesis-project/backend/node_modules/mysql2/lib/packets/packet.js",
+      "lineNumber": 1011,
+      "milliseconds": 301.931,
+      "percent": 0.12557424406711906
+    },
+    {
+      "functionName": "_encipher",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 796,
+      "milliseconds": 248.946,
+      "percent": 0.10353758230699406
+    },
+    {
+      "functionName": "(garbage collector)",
+      "url": "",
+      "lineNumber": 0,
+      "milliseconds": 213.034,
+      "percent": 0.08860164577534152
+    },
+    {
+      "functionName": "stringify",
+      "url": "file:///E:/thesis-project/backend/node_modules/express/lib/response.js",
+      "lineNumber": 1029,
+      "milliseconds": 183.88,
+      "percent": 0.07647638698597313
+    },
+    {
+      "functionName": "get",
+      "url": "file:///E:/thesis-project/backend/node_modules/mysql2/lib/packets/column_definition.js",
+      "lineNumber": 292,
+      "milliseconds": 182.893,
+      "percent": 0.07606588995554484
+    },
+    {
+      "functionName": "writeBuffer",
+      "url": "",
+      "lineNumber": 0,
+      "milliseconds": 142.597,
+      "percent": 0.05930663125428981
+    },
+    {
+      "functionName": "_key",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 935,
+      "milliseconds": 138.654,
+      "percent": 0.057666722651474434
+    },
+    {
+      "functionName": "MockBuffer",
+      "url": "file:///E:/thesis-project/backend/node_modules/mysql2/lib/packets/packet.js",
+      "lineNumber": 1011,
+      "milliseconds": 122.309,
+      "percent": 0.050868775374523535
+    },
+    {
+      "functionName": "stringify",
+      "url": "file:///E:/thesis-project/backend/node_modules/express/lib/response.js",
+      "lineNumber": 1029,
+      "milliseconds": 117.597,
+      "percent": 0.04890903676522451
+    },
+    {
+      "functionName": "start",
+      "url": "file:///E:/thesis-project/backend/node_modules/mysql2/lib/commands/execute.js",
+      "lineNumber": 44,
+      "milliseconds": 106.839,
+      "percent": 0.044434743904689926
+    },
+    {
+      "functionName": "createPrivateKey",
+      "url": "node:internal/crypto/keys",
+      "lineNumber": 717,
+      "milliseconds": 103.033,
+      "percent": 0.042851814119674626
+    },
+    {
+      "functionName": "stringify",
+      "url": "file:///E:/thesis-project/backend/node_modules/express/lib/response.js",
+      "lineNumber": 1029,
+      "milliseconds": 101.674,
+      "percent": 0.04228660088324904
+    },
+    {
+      "functionName": "keyFromFields",
+      "url": "file:///E:/thesis-project/backend/node_modules/mysql2/lib/parsers/parser_cache.js",
+      "lineNumber": 9,
+      "milliseconds": 92.036,
+      "percent": 0.03827812025582458
+    },
+    {
+      "functionName": "_key",
+      "url": "file:///E:/thesis-project/backend/node_modules/bcryptjs/umd/index.js",
+      "lineNumber": 935,
+      "milliseconds": 90.172,
+      "percent": 0.03750287561071987
+    },
+    {
+      "functionName": "stringify",
+      "url": "file:///E:/thesis-project/backend/node_modules/express/lib/response.js",
+      "lineNumber": 1029,
+      "milliseconds": 86.439,
+      "percent": 0.03595030680161264
+    }
+  ],
+  "heapTop": [
+    {
+      "functionName": "createLRU",
+      "url": "E:\\thesis-project\\backend\\node_modules\\lru.min\\lib\\index.js",
+      "lineNumber": 4,
+      "bytes": 4185584,
+      "megabytes": 3.9916839599609375
+    },
+    {
+      "functionName": "readFileSync",
+      "url": "node:fs",
+      "lineNumber": 435,
+      "bytes": 2172520,
+      "megabytes": 2.0718765258789062
+    },
+    {
+      "functionName": "wrapSafe",
+      "url": "node:internal/modules/cjs/loader",
+      "lineNumber": 1444,
+      "bytes": 1582904,
+      "megabytes": 1.5095748901367188
+    },
+    {
+      "functionName": "compileForInternalLoader",
+      "url": "node:internal/bootstrap/realm",
+      "lineNumber": 384,
+      "bytes": 1050728,
+      "megabytes": 1.0020523071289062
+    },
+    {
+      "functionName": "readField",
+      "url": "E:\\thesis-project\\backend\\node_modules\\mysql2\\lib\\commands\\prepare.js",
+      "lineNumber": 102,
+      "bytes": 1048800,
+      "megabytes": 1.000213623046875
+    },
+    {
+      "functionName": "(anonymous)",
+      "url": "node:internal/modules/cjs/loader",
+      "lineNumber": 1714,
+      "bytes": 590208,
+      "megabytes": 0.5628662109375
+    },
+    {
+      "functionName": "test",
+      "url": "",
+      "lineNumber": 0,
+      "bytes": 553216,
+      "megabytes": 0.527587890625
+    },
+    {
+      "functionName": "_encipher",
+      "url": "E:\\thesis-project\\backend\\node_modules\\bcryptjs\\umd\\index.js",
+      "lineNumber": 796,
+      "bytes": 547456,
+      "megabytes": 0.5220947265625
+    },
+    {
+      "functionName": "loginTenantUser",
+      "url": "E:\\thesis-project\\backend\\dist\\modules\\identity\\auth\\auth.service.js",
+      "lineNumber": 63,
+      "bytes": 528192,
+      "megabytes": 0.50372314453125
+    },
+    {
+      "functionName": "assertEncoding",
+      "url": "node:internal/fs/utils",
+      "lineNumber": 154,
+      "bytes": 524608,
+      "megabytes": 0.50030517578125
+    },
+    {
+      "functionName": "set",
+      "url": "node:internal/streams/writable",
+      "lineNumber": 217,
+      "bytes": 524320,
+      "megabytes": 0.500030517578125
+    },
+    {
+      "functionName": "handle",
+      "url": "E:\\thesis-project\\backend\\node_modules\\express\\lib\\application.js",
+      "lineNumber": 152,
+      "bytes": 524320,
+      "megabytes": 0.500030517578125
+    },
+    {
+      "functionName": "(root)",
+      "url": "",
+      "lineNumber": 0,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "processImmediate",
+      "url": "node:internal/timers",
+      "lineNumber": 443,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "next",
+      "url": "E:\\thesis-project\\backend\\node_modules\\bcryptjs\\umd\\index.js",
+      "lineNumber": 1046,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "processTicksAndRejections",
+      "url": "node:internal/process/task_queues",
+      "lineNumber": 72,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "endReadableNT",
+      "url": "node:internal/streams/readable",
+      "lineNumber": 1692,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "emit",
+      "url": "node:events",
+      "lineNumber": 465,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "onEnd",
+      "url": "E:\\thesis-project\\backend\\node_modules\\raw-body\\index.js",
+      "lineNumber": 272,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "done",
+      "url": "E:\\thesis-project\\backend\\node_modules\\raw-body\\index.js",
+      "lineNumber": 213,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "invokeCallback",
+      "url": "E:\\thesis-project\\backend\\node_modules\\raw-body\\index.js",
+      "lineNumber": 230,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "runInAsyncScope",
+      "url": "node:async_hooks",
+      "lineNumber": 204,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "(anonymous)",
+      "url": "E:\\thesis-project\\backend\\node_modules\\body-parser\\lib\\read.js",
+      "lineNumber": 113,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "next",
+      "url": "E:\\thesis-project\\backend\\node_modules\\router\\index.js",
+      "lineNumber": 188,
+      "bytes": 0,
+      "megabytes": 0
+    },
+    {
+      "functionName": "processParams",
+      "url": "E:\\thesis-project\\backend\\node_modules\\router\\index.js",
+      "lineNumber": 576,
+      "bytes": 0,
+      "megabytes": 0
+    }
+  ]
+}
