@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import type { Server } from "node:http";
 import { after, before, test } from "node:test";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import app from "../../src/app.js";
+import crmApp from "../../apps/crm-service/app.js";
+import { createGatewayApp } from "../../apps/gateway/app.js";
 import { database } from "../../src/config/database.js";
 import { createTenantAccessToken } from "../../src/modules/identity/auth/auth.tokens.js";
 
@@ -19,6 +20,7 @@ interface ApiResult {
 }
 
 let server: Server | undefined;
+let crmServer: Server | undefined;
 let baseUrl = "";
 let fixture: FixtureRow;
 let customerId = 0;
@@ -28,6 +30,12 @@ const testDriveIds: number[] = [];
 let writeToken = "";
 let readToken = "";
 const suffix = `${Date.now()}`.slice(-10);
+const inventoryDatabase =
+  process.env.INVENTORY_DB_NAME ?? "dealership_inventory";
+
+if (!/^[A-Za-z0-9_]+$/.test(inventoryDatabase)) {
+  throw new Error("Invalid Inventory database name");
+}
 
 async function request(
   method: string,
@@ -121,7 +129,7 @@ before(async () => {
   for (const index of [1, 2]) {
     const [vehicleResult] = await database.execute<ResultSetHeader>(
       `
-        INSERT INTO vehicles (
+        INSERT INTO \`${inventoryDatabase}\`.vehicles (
           tenant_id,
           location_id,
           stock_number,
@@ -146,7 +154,26 @@ before(async () => {
         fixture.userId,
       ],
     );
-    vehicleIds.push(vehicleResult.insertId);
+    const vehicleId = vehicleResult.insertId;
+
+    await database.execute(
+      `INSERT INTO vehicles (
+         id, tenant_id, location_id, stock_number, vin, vehicle_condition,
+         status, make, model, model_year, mileage_km, asking_price,
+         created_by_user_id
+       ) VALUES (?, ?, ?, ?, ?, 'USED', 'AVAILABLE', 'CRM', ?, 2024, 1000,
+                 25000, ?)`,
+      [
+        vehicleId,
+        fixture.tenantId,
+        fixture.locationId,
+        `CRM-${suffix}-${index}`,
+        `CRMTEST${suffix}${index}`,
+        `Vehicle ${index}`,
+        fixture.userId,
+      ],
+    );
+    vehicleIds.push(vehicleId);
   }
 
   writeToken = createTenantAccessToken(
@@ -162,7 +189,16 @@ before(async () => {
     { roles: ["SALESPERSON"], permissions: ["crm.read"] },
   );
 
-  server = app.listen(0);
+  crmServer = crmApp.listen(0);
+  await new Promise<void>((resolve) => crmServer?.once("listening", resolve));
+  const crmAddress = crmServer.address();
+
+  if (!crmAddress || typeof crmAddress === "string") {
+    throw new Error("Could not determine CRM service test port");
+  }
+
+  const crmUrl = `http://127.0.0.1:${crmAddress.port}`;
+  server = createGatewayApp(crmUrl, crmUrl, crmUrl, crmUrl).listen(0);
   await new Promise<void>((resolve) => server?.once("listening", resolve));
   const address = server.address();
 
@@ -179,6 +215,11 @@ after(async () => {
       server?.close((error) => (error ? reject(error) : resolve())),
     );
   }
+  if (crmServer) {
+    await new Promise<void>((resolve, reject) =>
+      crmServer?.close((error) => (error ? reject(error) : resolve())),
+    );
+  }
 
   for (const testDriveId of testDriveIds) {
     await database.execute("DELETE FROM test_drives WHERE id = ?", [testDriveId]);
@@ -193,6 +234,10 @@ after(async () => {
   }
   for (const vehicleId of vehicleIds) {
     await database.execute("DELETE FROM vehicles WHERE id = ?", [vehicleId]);
+    await database.execute(
+      `DELETE FROM \`${inventoryDatabase}\`.vehicles WHERE id = ?`,
+      [vehicleId],
+    );
   }
 
   await database.end();

@@ -161,6 +161,7 @@ export interface ReserveVehicleRepositoryInput {
   agreedPrice: string | null;
   expiresAt: Date;
   notes: string | null;
+  operationId: string | null;
 }
 
 export type ReserveVehicleRepositoryResult =
@@ -173,13 +174,15 @@ export type ReserveVehicleRepositoryResult =
   | { outcome: "NOT_AVAILABLE"; currentStatus: VehicleStatus }
   | { outcome: "CUSTOMER_NOT_FOUND" }
   | { outcome: "LEAD_NOT_FOUND" }
-  | { outcome: "OFFER_NOT_FOUND" };
+  | { outcome: "OFFER_NOT_FOUND" }
+  | { outcome: "IDEMPOTENCY_CONFLICT" };
 
 export interface CancelVehicleReservationRepositoryInput {
   tenantId: number;
   vehicleId: number;
   cancelledByUserId: number;
   cancellationReason: string | null;
+  operationId: string | null;
 }
 
 export type CancelVehicleReservationRepositoryResult =
@@ -190,7 +193,13 @@ export type CancelVehicleReservationRepositoryResult =
     }
   | { outcome: "NOT_FOUND" }
   | { outcome: "NOT_RESERVED"; currentStatus: VehicleStatus }
-  | { outcome: "ACTIVE_RESERVATION_NOT_FOUND" };
+  | { outcome: "ACTIVE_RESERVATION_NOT_FOUND" }
+  | { outcome: "IDEMPOTENCY_CONFLICT" };
+
+interface ReservationOperationRow extends RowDataPacket {
+  id: number;
+  vehicleId: number;
+}
 
 export interface ListVehiclesRepositoryInput {
   tenantId: number;
@@ -1016,13 +1025,9 @@ export async function updateVehicleStatusRepository(
 
   try {
     await connection.beginTransaction();
-    await expireReservationForVehicle(
-      connection,
-      input.tenantId,
-      input.vehicleId,
-    );
-
-    const [statusRows] = await connection.execute<VehicleStatusRow[]>(
+    // Lifecycle commands lock the vehicle before touching reservation rows so
+    // status changes use the same lock order as reservation commands.
+    const [lockedVehicleRows] = await connection.execute<VehicleStatusRow[]>(
       `
         SELECT v.status
         FROM vehicles v
@@ -1036,6 +1041,27 @@ export async function updateVehicleStatusRepository(
         LIMIT 1
         FOR UPDATE
       `,
+      [input.vehicleId, input.tenantId],
+    );
+    const lockedVehicleStatus = lockedVehicleRows[0]?.status;
+
+    if (!lockedVehicleStatus) {
+      await connection.rollback();
+
+      return { outcome: "NOT_FOUND" };
+    }
+
+    await expireReservationForVehicle(
+      connection,
+      input.tenantId,
+      input.vehicleId,
+    );
+
+    const [statusRows] = await connection.execute<VehicleStatusRow[]>(
+      `SELECT status
+       FROM vehicles
+       WHERE id = ? AND tenant_id = ?
+       LIMIT 1`,
       [input.vehicleId, input.tenantId],
     );
     const currentStatus = statusRows[0]?.status;
@@ -1108,13 +1134,10 @@ export async function reserveVehicle(
 
   try {
     await connection.beginTransaction();
-    await expireReservationForVehicle(
-      connection,
-      input.tenantId,
-      input.vehicleId,
-    );
 
-    const [statusRows] = await connection.execute<VehicleStatusRow[]>(
+    // Lock the vehicle before updating or inserting reservation rows. Without
+    // this ordering, concurrent attempts can deadlock on reservation gap locks.
+    const [lockedVehicleRows] = await connection.execute<VehicleStatusRow[]>(
       `
         SELECT v.status
         FROM vehicles v
@@ -1128,6 +1151,68 @@ export async function reserveVehicle(
         LIMIT 1
         FOR UPDATE
       `,
+      [input.vehicleId, input.tenantId],
+    );
+    const lockedVehicleStatus = lockedVehicleRows[0]?.status;
+
+    if (!lockedVehicleStatus) {
+      await connection.rollback();
+
+      return { outcome: "NOT_FOUND" };
+    }
+
+    if (input.operationId !== null) {
+      const [operationRows] =
+        await connection.execute<ReservationOperationRow[]>(
+          `SELECT id, vehicle_id AS vehicleId
+           FROM vehicle_reservations
+           WHERE tenant_id = ? AND operation_id = ?
+           LIMIT 1 FOR UPDATE`,
+          [input.tenantId, input.operationId],
+        );
+      const previousReservation = operationRows[0];
+
+      if (previousReservation) {
+        if (previousReservation.vehicleId !== input.vehicleId) {
+          await connection.rollback();
+          return { outcome: "IDEMPOTENCY_CONFLICT" };
+        }
+
+        const [[reservationRows], [vehicleRows]] = await Promise.all([
+          connection.execute<VehicleReservationRow[]>(
+            VEHICLE_RESERVATION_QUERY,
+            [previousReservation.id, input.tenantId],
+          ),
+          connection.execute<VehicleDetailsRow[]>(VEHICLE_DETAILS_QUERY, [
+            input.vehicleId,
+            input.tenantId,
+          ]),
+        ]);
+
+        if (!reservationRows[0] || !vehicleRows[0]) {
+          throw new Error("Idempotent reservation could not be reloaded");
+        }
+
+        await connection.commit();
+        return {
+          outcome: "CREATED",
+          reservation: mapVehicleReservationRow(reservationRows[0]),
+          vehicle: mapVehicleDetailsRow(vehicleRows[0]),
+        };
+      }
+    }
+
+    await expireReservationForVehicle(
+      connection,
+      input.tenantId,
+      input.vehicleId,
+    );
+
+    const [statusRows] = await connection.execute<VehicleStatusRow[]>(
+      `SELECT status
+       FROM vehicles
+       WHERE id = ? AND tenant_id = ?
+       LIMIT 1`,
       [input.vehicleId, input.tenantId],
     );
     const currentStatus = statusRows[0]?.status;
@@ -1226,6 +1311,7 @@ export async function reserveVehicle(
         INSERT INTO vehicle_reservations (
           tenant_id,
           reservation_number,
+          operation_id,
           vehicle_id,
           customer_id,
           lead_id,
@@ -1241,11 +1327,12 @@ export async function reserveVehicle(
         VALUES (
           ?,
           CONCAT('RES-', UPPER(REPLACE(UUID(), '-', ''))),
-          ?, ?, ?, ?, ?, ?, 'ACTIVE', CURRENT_TIMESTAMP(3), ?, ?, ?
+          ?, ?, ?, ?, ?, ?, ?, 'ACTIVE', CURRENT_TIMESTAMP(3), ?, ?, ?
         )
       `,
       [
         input.tenantId,
+        input.operationId,
         input.vehicleId,
         input.customerId,
         input.leadId,
@@ -1315,13 +1402,7 @@ export async function cancelVehicleReservation(
 
   try {
     await connection.beginTransaction();
-    await expireReservationForVehicle(
-      connection,
-      input.tenantId,
-      input.vehicleId,
-    );
-
-    const [statusRows] = await connection.execute<VehicleStatusRow[]>(
+    const [lockedVehicleRows] = await connection.execute<VehicleStatusRow[]>(
       `
         SELECT v.status
         FROM vehicles v
@@ -1335,6 +1416,68 @@ export async function cancelVehicleReservation(
         LIMIT 1
         FOR UPDATE
       `,
+      [input.vehicleId, input.tenantId],
+    );
+    const lockedVehicleStatus = lockedVehicleRows[0]?.status;
+
+    if (!lockedVehicleStatus) {
+      await connection.rollback();
+
+      return { outcome: "NOT_FOUND" };
+    }
+
+    if (input.operationId !== null) {
+      const [operationRows] =
+        await connection.execute<ReservationOperationRow[]>(
+          `SELECT id, vehicle_id AS vehicleId
+           FROM vehicle_reservations
+           WHERE tenant_id = ? AND cancellation_operation_id = ?
+           LIMIT 1 FOR UPDATE`,
+          [input.tenantId, input.operationId],
+        );
+      const previousCancellation = operationRows[0];
+
+      if (previousCancellation) {
+        if (previousCancellation.vehicleId !== input.vehicleId) {
+          await connection.rollback();
+          return { outcome: "IDEMPOTENCY_CONFLICT" };
+        }
+
+        const [[reservationRows], [vehicleRows]] = await Promise.all([
+          connection.execute<VehicleReservationRow[]>(
+            VEHICLE_RESERVATION_QUERY,
+            [previousCancellation.id, input.tenantId],
+          ),
+          connection.execute<VehicleDetailsRow[]>(VEHICLE_DETAILS_QUERY, [
+            input.vehicleId,
+            input.tenantId,
+          ]),
+        ]);
+
+        if (!reservationRows[0] || !vehicleRows[0]) {
+          throw new Error("Idempotent cancellation could not be reloaded");
+        }
+
+        await connection.commit();
+        return {
+          outcome: "CANCELLED",
+          reservation: mapVehicleReservationRow(reservationRows[0]),
+          vehicle: mapVehicleDetailsRow(vehicleRows[0]),
+        };
+      }
+    }
+
+    await expireReservationForVehicle(
+      connection,
+      input.tenantId,
+      input.vehicleId,
+    );
+
+    const [statusRows] = await connection.execute<VehicleStatusRow[]>(
+      `SELECT status
+       FROM vehicles
+       WHERE id = ? AND tenant_id = ?
+       LIMIT 1`,
       [input.vehicleId, input.tenantId],
     );
     const currentStatus = statusRows[0]?.status;
@@ -1380,6 +1523,7 @@ export async function cancelVehicleReservation(
         `
           UPDATE vehicle_reservations
           SET status = 'CANCELLED',
+              cancellation_operation_id = ?,
               cancelled_at = CURRENT_TIMESTAMP(3),
               cancellation_reason = ?,
               updated_at = CURRENT_TIMESTAMP(3)
@@ -1387,7 +1531,12 @@ export async function cancelVehicleReservation(
             AND tenant_id = ?
             AND status = 'ACTIVE'
         `,
-        [input.cancellationReason, reservationId, input.tenantId],
+        [
+          input.operationId,
+          input.cancellationReason,
+          reservationId,
+          input.tenantId,
+        ],
       );
 
     if (reservationUpdateResult.affectedRows !== 1) {

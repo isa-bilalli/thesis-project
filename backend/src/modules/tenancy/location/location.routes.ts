@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { requireTenantAuth } from "../../../shared/middleware/require-tenant-auth.js";
+import { requireActiveTenantAuth } from "../../../shared/middleware/require-active-tenant-auth.js";
 import { requirePermission } from "../../../shared/middleware/require-permission.js";
 import {
   createLocationController,
@@ -11,7 +12,7 @@ import {
 
 export const locationRouter = Router();
 
-locationRouter.use(requireTenantAuth);
+locationRouter.use(requireTenantAuth, requireActiveTenantAuth);
 
 locationRouter.get("/", getLocationsController);
 locationRouter.post(

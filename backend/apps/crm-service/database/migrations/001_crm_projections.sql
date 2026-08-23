@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS crm_projection_sync (
+    projection_name VARCHAR(50) PRIMARY KEY,
+    synchronized_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+        ON UPDATE CURRENT_TIMESTAMP(3)
+);

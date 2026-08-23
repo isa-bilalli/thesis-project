@@ -40,8 +40,10 @@ export function setup() {
 }
 
 export default function (data) {
+  const requestOptions = authHeaders(data.token)
+  requestOptions.headers['Idempotency-Key'] = `sale-${__VU}-${Date.now()}`
   const response = http.patch(`${baseUrl}/api/tenant/sales/${data.saleId}/status`, JSON.stringify({ status: 'COMPLETED' }), {
-    ...authHeaders(data.token), tags: { endpoint: 'sale_contention' },
+    ...requestOptions, tags: { endpoint: 'sale_contention' },
   })
   if (response.status === 200) successes.add(1)
   if (response.status === 409) conflicts.add(1)

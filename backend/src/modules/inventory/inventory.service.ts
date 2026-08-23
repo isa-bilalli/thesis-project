@@ -94,6 +94,7 @@ export interface ReserveVehicleInput {
   agreedPrice: unknown;
   expiresAt: unknown;
   notes: unknown;
+  operationId: string | null;
 }
 
 export interface CancelVehicleReservationInput {
@@ -102,6 +103,7 @@ export interface CancelVehicleReservationInput {
   cancelledByUserId: number;
   includeFinancials: boolean;
   cancellationReason: unknown;
+  operationId: string | null;
 }
 
 export interface GetVehicleByIdInput {
@@ -989,6 +991,7 @@ export async function reserveVehicle(
     agreedPrice: parseOptionalPrice(input.agreedPrice, "agreedPrice"),
     expiresAt,
     notes: parseOptionalString(input.notes, "notes", 65_535),
+    operationId: input.operationId,
   });
 
   switch (result.outcome) {
@@ -1011,6 +1014,8 @@ export async function reserveVehicle(
         404,
         "Offer not found for the selected vehicle and customer",
       );
+    case "IDEMPOTENCY_CONFLICT":
+      throw new AppError(409, "Idempotency key was used for another vehicle");
     case "CREATED":
       return {
         reservation: result.reservation,
@@ -1051,6 +1056,7 @@ export async function cancelVehicleReservation(
       "cancellationReason",
       255,
     ),
+    operationId: input.operationId,
   });
 
   switch (result.outcome) {
@@ -1063,6 +1069,8 @@ export async function cancelVehicleReservation(
       );
     case "ACTIVE_RESERVATION_NOT_FOUND":
       throw new AppError(404, "Active vehicle reservation not found");
+    case "IDEMPOTENCY_CONFLICT":
+      throw new AppError(409, "Idempotency key was used for another vehicle");
     case "CANCELLED":
       return {
         reservation: result.reservation,

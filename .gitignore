@@ -2,4 +2,6 @@
 .tools/
 backend/.database-dist/
 backend/dist/
+backend/dist-services/
+backend/dist-tests/
 testing/reports/rendered*/

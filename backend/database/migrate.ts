@@ -4,7 +4,21 @@ import path from "node:path";
 import mysql, { type RowDataPacket } from "mysql2/promise";
 import { env } from "../src/config/env.js";
 
-const migrationsDirectory = path.resolve(process.cwd(), "database", "migrations");
+const migrationsDirectory = path.resolve(
+  process.cwd(),
+  process.env.MIGRATIONS_DIRECTORY ?? path.join("database", "migrations"),
+);
+const accessMigrationFiles = new Set([
+  "001_tenancy.sql",
+  "002_identity.sql",
+  "006_platform_admin.sql",
+  "007_unique_email.sql",
+  "008_user_auth_version.sql",
+  "009_platform_auth.sql",
+  "010_locations_manage_permission.sql",
+  "011_inventory_financials_read_permission.sql",
+  "012_default_role_permissions.sql",
+]);
 
 interface AppliedMigration extends RowDataPacket {
   filename: string;
@@ -34,10 +48,19 @@ async function ensureDatabaseExists(): Promise<void> {
 
 async function getMigrationFiles(): Promise<string[]> {
   const entries = await readdir(migrationsDirectory, { withFileTypes: true });
+  const migrationScope = process.env.MIGRATION_SCOPE ?? "all";
+
+  if (migrationScope !== "all" && migrationScope !== "access") {
+    throw new Error(`Unsupported migration scope: ${migrationScope}`);
+  }
 
   return entries
     .filter((entry) => entry.isFile() && entry.name.endsWith(".sql"))
     .map((entry) => entry.name)
+    .filter(
+      (filename) =>
+        migrationScope === "all" || accessMigrationFiles.has(filename),
+    )
     .sort((left, right) => left.localeCompare(right, "en"));
 }
 

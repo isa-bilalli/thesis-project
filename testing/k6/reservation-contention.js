@@ -36,11 +36,13 @@ export function setup() {
 }
 
 export default function (data) {
+  const requestOptions = authHeaders(data.token)
+  requestOptions.headers['Idempotency-Key'] = `reservation-${__VU}-${Date.now()}`
   const response = http.post(`${baseUrl}/api/tenant/vehicles/${data.vehicleId}/reservation`, JSON.stringify({
     customerId: data.customerId, agreedPrice: '23500',
     expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
     notes: 'Simultaneous reservation benchmark',
-  }), { ...authHeaders(data.token), tags: { endpoint: 'reservation_contention' } })
+  }), { ...requestOptions, tags: { endpoint: 'reservation_contention' } })
   if (response.status === 201) successes.add(1)
   if (response.status === 409) conflicts.add(1)
   check(response, { 'reservation was serialized': (result) => result.status === 201 || result.status === 409 })

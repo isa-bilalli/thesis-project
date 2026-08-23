@@ -293,6 +293,11 @@ export async function reserveVehicleController(
     }
 
     const reservationBody = body as Record<string, unknown>;
+    const operationId = request.header("idempotency-key")?.trim() || null;
+
+    if (operationId !== null && operationId.length > 128) {
+      throw new AppError(400, "Idempotency-Key cannot exceed 128 characters");
+    }
     const unsupportedFields = Object.keys(reservationBody).filter(
       (field) => !VEHICLE_RESERVATION_FIELDS.has(field),
     );
@@ -317,6 +322,7 @@ export async function reserveVehicleController(
       agreedPrice: reservationBody.agreedPrice,
       expiresAt: reservationBody.expiresAt,
       notes: reservationBody.notes,
+      operationId,
     });
 
     response.status(201).json(result);
@@ -336,6 +342,11 @@ export async function cancelVehicleReservationController(
     }
 
     const body: unknown = request.body;
+    const operationId = request.header("idempotency-key")?.trim() || null;
+
+    if (operationId !== null && operationId.length > 128) {
+      throw new AppError(400, "Idempotency-Key cannot exceed 128 characters");
+    }
     let cancellationReason: unknown;
 
     if (body !== undefined) {
@@ -366,6 +377,7 @@ export async function cancelVehicleReservationController(
         "inventory.financials.read",
       ),
       cancellationReason,
+      operationId,
     });
 
     response.status(200).json(result);

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import type { Server } from "node:http";
 import { after, before, test } from "node:test";
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import app from "../../src/app.js";
+import app from "../../apps/inventory-service/app.js";
 import { database } from "../../src/config/database.js";
 import { createTenantAccessToken } from "../../src/modules/identity/auth/auth.tokens.js";
 

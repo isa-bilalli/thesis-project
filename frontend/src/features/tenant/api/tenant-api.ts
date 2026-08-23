@@ -37,6 +37,13 @@ function jsonOptions(method: string, body?: unknown): RequestInit {
   return { method, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }
 }
 
+function idempotentJsonOptions(method: string, body?: unknown): RequestInit {
+  return {
+    ...jsonOptions(method, body),
+    headers: { 'Idempotency-Key': crypto.randomUUID() },
+  }
+}
+
 export async function listTenantUsers(): Promise<TenantUser[]> {
   return (await tenantRequest<{ users: TenantUser[] }>('/api/users')).users
 }
@@ -98,11 +105,11 @@ export async function updateVehicleStatus(id: number, status: string): Promise<V
 }
 
 export async function reserveVehicle(id: number, input: Record<string, unknown>): Promise<void> {
-  await tenantRequest(`/api/tenant/vehicles/${id}/reservation`, jsonOptions('POST', input))
+  await tenantRequest(`/api/tenant/vehicles/${id}/reservation`, idempotentJsonOptions('POST', input))
 }
 
 export async function cancelVehicleReservation(id: number, cancellationReason: string | null): Promise<void> {
-  await tenantRequest(`/api/tenant/vehicles/${id}/reservation`, jsonOptions('DELETE', { cancellationReason }))
+  await tenantRequest(`/api/tenant/vehicles/${id}/reservation`, idempotentJsonOptions('DELETE', { cancellationReason }))
 }
 
 export async function listCustomers(query: Record<string, QueryValue> = {}): Promise<{ customers: Customer[]; pagination: Pagination }> {
@@ -222,11 +229,11 @@ export async function getSale(id: number): Promise<Sale> {
 }
 
 export async function createSale(input: Record<string, unknown>): Promise<Sale> {
-  return (await tenantRequest<{ sale: Sale }>('/api/tenant/sales', jsonOptions('POST', input))).sale
+  return (await tenantRequest<{ sale: Sale }>('/api/tenant/sales', idempotentJsonOptions('POST', input))).sale
 }
 
 export async function updateSaleStatus(id: number, status: string, cancellationReason?: string | null): Promise<Sale> {
-  return (await tenantRequest<{ sale: Sale }>(`/api/tenant/sales/${id}/status`, jsonOptions('PATCH', { status, cancellationReason }))).sale
+  return (await tenantRequest<{ sale: Sale }>(`/api/tenant/sales/${id}/status`, idempotentJsonOptions('PATCH', { status, cancellationReason }))).sale
 }
 
 export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
